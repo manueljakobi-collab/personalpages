@@ -357,6 +357,28 @@ const YEAR_COLORS= ['#c8f064','#5b8def','#f5c842','#ff7eb3','#3dd9a4','#ff8c5f',
 
 let positions=[], payments=[], divChart=null, eurUsd=null;
 
+// ── Forecast settings persistence ─────────────────────────────────────
+const FC_KEY = 'ddepot_forecast_settings_v1';
+function saveFcSettings(){
+  const s={
+    year:  document.getElementById('fc-year').value,
+    yield: document.getElementById('fc-yield').value,
+    tax:   document.getElementById('fc-tax').value,
+    pg:    document.getElementById('fc-pgrowth').value
+  };
+  localStorage.setItem(FC_KEY, JSON.stringify(s));
+}
+function loadFcSettings(){
+  try{
+    const s=JSON.parse(localStorage.getItem(FC_KEY));
+    if(!s) return;
+    if(s.year)  document.getElementById('fc-year').value   = s.year;
+    if(s.yield) document.getElementById('fc-yield').value  = s.yield;
+    if(s.tax)   document.getElementById('fc-tax').value    = s.tax;
+    if(s.pg)    document.getElementById('fc-pgrowth').value= s.pg;
+  }catch(e){}
+}
+
 // ── Supabase ───────────────────────────────────────────────────────────
 function sbH(x={}){ return {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json',...x}; }
 async function sbGet(t,q=''){
@@ -836,7 +858,7 @@ function render(){
 
 // ── Forecast inputs live update ────────────────────────────────────────
 ['fc-year','fc-yield','fc-tax','fc-pgrowth'].forEach(id=>{
-  document.getElementById(id).addEventListener('input', ()=>render());
+  document.getElementById(id).addEventListener('input', ()=>{ saveFcSettings(); render(); });
 });
 
 // ── Init ───────────────────────────────────────────────────────────────
@@ -853,6 +875,7 @@ async function init(){
     positions=positions.map(p=>({...p,currency:p.currency||'USD',logo_url:p.logo_url||'',purchase_price:p.purchase_price||0,div_growth:p.div_growth||0}));
     setSyncState('ok');
     document.getElementById('btn-refresh').disabled=false;
+    loadFcSettings();
     await fetchFxRate();
     render();
   }catch(e){
