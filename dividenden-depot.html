@@ -424,11 +424,12 @@ let positions=[], payments=[], divChart=null, eurUsd=null;
 // ── Brutto / Netto switch ─────────────────────────────────────────────
 let bnMode = 'brutto'; // 'brutto' | 'netto'
 
-function setBNMode(mode){
+async function setBNMode(mode){
   bnMode = mode;
   document.getElementById('btn-brutto').classList.toggle('active', mode==='brutto');
   document.getElementById('btn-netto').classList.toggle('active',  mode==='netto');
   render();
+  try{ await sbUpsert('depot_settings', {key:'bnMode', value:mode}); }catch(e){}
 }
 
 // ── Forecast settings persistence ─────────────────────────────────────
@@ -652,8 +653,9 @@ function needleXY(pct, len=90, cx=150, cy=150){
 }
 
 function updateGauge(annual, forecast, targetYear, GOAL, taxRate, mode){
-  const pct = Math.min(annual/GOAL, 1);
-  const pctFc = Math.min(forecast/GOAL, 1);
+  const factor  = (mode==='netto') ? (1 - taxRate) : 1;
+  const pct   = Math.min(annual   * factor / GOAL, 1);
+  const pctFc = Math.min(forecast * factor / GOAL, 1);
   const fill = pct * ARC;
   const fillFc = pctFc * ARC;
 
@@ -673,7 +675,6 @@ function updateGauge(annual, forecast, targetYear, GOAL, taxRate, mode){
   fcNeedle.setAttribute('x2',fn.x2); fcNeedle.setAttribute('y2',fn.y2);
 
   // Values
-  const factor    = (mode==='netto') ? (1 - taxRate) : 1;
   const dispCur   = Math.round(annual   * factor);
   const dispFc    = Math.round(forecast * factor);
   const dispGoal  = Math.round(GOAL     * factor);
@@ -1086,19 +1087,35 @@ function editCash(){
   document.getElementById('cash-modal').classList.add('open');
 }
 
-function saveCash(){
+async function saveCash(){
   cashValue = parseFloat(document.getElementById('cash-input').value)||0;
-  localStorage.setItem('ddepot_cash_v1', cashValue);
   document.getElementById('cash-modal').classList.remove('open');
   updateCashKpi();
+  try{
+    await sbUpsert('depot_settings', {key:'cash', value:String(cashValue)});
+  }catch(e){ showToast('Cash nicht gespeichert: '+e.message,'err'); }
 }
 
 function updateCashKpi(){
   document.getElementById('kpi-cash').textContent = Math.round(cashValue).toLocaleString('de-DE');
 }
 
-function loadCash(){
-  cashValue = parseFloat(localStorage.getItem('ddepot_cash_v1'))||0;
+async function loadBnMode(){
+  try{
+    const rows = await sbGet('depot_settings','key=eq.bnMode&select=value');
+    if(rows.length){
+      bnMode = rows[0].value;
+      document.getElementById('btn-brutto').classList.toggle('active', bnMode==='brutto');
+      document.getElementById('btn-netto').classList.toggle('active',  bnMode==='netto');
+    }
+  }catch(e){}
+}
+
+async function loadCash(){
+  try{
+    const rows = await sbGet('depot_settings','key=eq.cash&select=value');
+    cashValue = rows.length ? parseFloat(rows[0].value)||0 : 0;
+  }catch(e){ cashValue=0; }
   updateCashKpi();
 }
 
@@ -1124,7 +1141,7 @@ async function init(){
     setSyncState('ok');
     document.getElementById('btn-refresh').disabled=false;
     loadFcSettings();
-    loadCash();
+    await Promise.all([loadCash(), loadBnMode()]);
     await fetchFxRate();
     render();
   }catch(e){
