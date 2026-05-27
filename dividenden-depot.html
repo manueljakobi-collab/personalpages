@@ -36,7 +36,7 @@
 
   .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-bottom:2rem;}
   .kpi{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;min-width:0;}
-  .kpi-label{font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+  .kpi-label{font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;min-height:2.6em;display:flex;align-items:flex-end;}
   .kpi-value{font-size:28px;font-weight:500;color:var(--text);font-family:'DM Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .kpi-value.accent{color:var(--accent);}
   .kpi-value.gold{color:var(--gold);}
@@ -70,8 +70,8 @@
   .forecast-settings-title{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;}
   .forecast-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
   .fi-group{display:flex;flex-direction:column;gap:3px;}
-  .fi-group label{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);}
-  .fi-group input{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:5px 8px;font-size:12px;font-family:'DM Mono',monospace;outline:none;width:100%;}
+  .fi-group label{font-size:9px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .fi-group input{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:4px 6px;font-size:12px;font-family:'DM Mono',monospace;outline:none;width:100%;min-width:0;}
   .fi-group input:focus{border-color:var(--gold);}
   .fi-hint{font-size:10px;color:var(--text3);margin-top:6px;grid-column:1/-1;}
 
@@ -145,6 +145,23 @@
   .toast.show{opacity:1;}
   .toast.ok{border-color:var(--teal);color:var(--teal);}
   .toast.err{border-color:var(--red);color:var(--red);}
+  .btn-ai{display:flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(245,200,66,0.1);border:0.5px solid var(--gold);color:var(--gold);border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;white-space:nowrap;}
+  .btn-ai:hover{background:rgba(245,200,66,0.2);}
+  .btn-ai:disabled{opacity:0.4;cursor:not-allowed;}
+  .ai-modal{background:var(--bg2);border:0.5px solid var(--gold);border-radius:var(--radius);padding:1.5rem;width:600px;max-width:95vw;max-height:85vh;box-sizing:border-box;display:flex;flex-direction:column;}
+  .ai-modal h3{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400;margin-bottom:0.75rem;color:var(--gold);}
+  .ai-response{font-size:13px;color:var(--text2);line-height:1.75;white-space:pre-wrap;}
+  .ai-company-header{font-family:'DM Serif Display',serif;font-size:16px;color:var(--accent);margin:1.25rem 0 0.5rem;padding-bottom:4px;border-bottom:0.5px solid var(--border2);}
+  .ai-company-header:first-child{margin-top:0;}
+  .ai-section-label{font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:0.6rem;margin-bottom:2px;}
+  .ai-section-body{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:0.25rem;}
+  .ai-loading{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:13px;}
+  #ai-modal-body{flex:1;overflow-y:auto;padding-right:4px;}
+  .finviz-tooltip{position:fixed;z-index:300;display:none;flex-direction:column;background:#080a0f;border:0.5px solid var(--border2);border-radius:var(--radius);overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.8);pointer-events:none;}
+  .finviz-tooltip img{width:420px;height:auto;display:block;image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges;filter:invert(1) hue-rotate(195deg) brightness(0.85) saturate(1.4);}
+  .finviz-tooltip-label{font-size:11px;color:var(--text3);padding:5px 10px;font-family:'DM Mono',monospace;background:var(--bg3);text-align:center;}
+  .finviz-tooltip.visible{display:flex;}
+  .ticker-hover{cursor:pointer;}
   .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(200,240,100,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -168,6 +185,7 @@
   <!-- KPIs -->
   <div class="kpi-row">
     <div class="kpi"><div class="kpi-label">Positionen</div><div class="kpi-value" id="kpi-pos">—</div></div>
+    <div class="kpi" style="cursor:pointer" onclick="editCash()" title="Klicken zum Bearbeiten"><div class="kpi-label">Cash 💵</div><div class="kpi-value" id="kpi-cash">0</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Einstandswert</div><div class="kpi-value blue" id="kpi-cost">—</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Depotwert</div><div class="kpi-value blue" id="kpi-depot">—</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Gewinn / Verlust</div><div class="kpi-value" id="kpi-diff">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="kpi-diff-pct"></div></div>
@@ -191,8 +209,8 @@
           <path id="gauge-fill-fc" d="M 35 150 A 115 115 0 0 1 265 150" fill="none" stroke="#f5c842" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 362" opacity="0.5"/>
           <!-- Labels -->
           <text x="25" y="168" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle">0</text>
-          <text x="275" y="168" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle">24k</text>
-          <text x="150" y="48" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle">12k</text>
+          <text x="275" y="168" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle" id="gauge-max-label">24k</text>
+          <text x="150" y="48" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle" id="gauge-mid-label">12k</text>
           <!-- Forecast needle -->
           <line id="gauge-needle-fc" x1="150" y1="150" x2="150" y2="60" stroke="#f5c842" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.7"/>
           <!-- Current needle -->
@@ -215,24 +233,32 @@
       <!-- Forecast Settings -->
       <div class="forecast-settings">
         <div class="forecast-settings-title">Prognose-Einstellungen</div>
-        <div class="forecast-inputs" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+        <div class="forecast-inputs" style="grid-template-columns:repeat(6,1fr);gap:6px;">
           <div class="fi-group">
             <label>Zieljahr</label>
             <input type="number" id="fc-year" value="2047" min="2025" max="2100">
           </div>
-          <div class="fi-group">
-            <label>Wiederanlagedividende %</label>
-            <input type="number" id="fc-yield" value="4.00" min="0" max="20" step="0.01">
+          <div class="fi-group" style="border-right:0.5px solid var(--border2);padding-right:6px;">
+            <label>Div.-Ziel €/Jahr</label>
+            <input type="text" id="fc-goal" value="24.000" style="font-family:'DM Mono',monospace;" oninput="formatGoalInput(this)">
           </div>
           <div class="fi-group">
+            <label>WA-Dividende %</label>
+            <input type="number" id="fc-yield" value="4.00" min="0" max="20" step="0.01">
+          </div>
+          <div class="fi-group" style="border-right:0.5px solid var(--border2);padding-right:6px;">
+            <label>WA-Div. Wachstum %</label>
+            <input type="number" id="fc-yield-growth" value="2.0" min="0" max="15" step="0.1">
+          </div>
+          <div class="fi-group" style="border-right:0.5px solid var(--border2);padding-right:6px;">
             <label>Steuer %</label>
             <input type="number" id="fc-tax" value="26.375" min="0" max="50" step="0.001">
           </div>
           <div class="fi-group">
-            <label>Kurswachstum % p.a.</label>
+            <label>Kurswachstum %</label>
             <input type="number" id="fc-pgrowth" value="3.0" min="0" max="20" step="0.1">
           </div>
-          <div class="fi-hint">KESt 25%+Soli 5,5%=26,375% · Nettodividenden werden zur Wiederanlagedividende reinvestiert · Kurswachstum für Depotwert-Prognose</div>
+          <div class="fi-hint" style="grid-column:1/-1;">KeSt 25%+Soli 5,5%=26,375% · Nettodividenden reinvestiert · Kurswachstum für Depotwert-Prognose</div>
         </div>
       </div>
     </div>
@@ -250,7 +276,6 @@
         </div>
         <div class="form-group"><label>Anteile</label><input type="number" id="add-shares" placeholder="100" min="0.001" step="any"></div>
         <div class="form-group"><label>Einstandskurs (€)</label><input type="number" id="add-purchase" placeholder="48.50" min="0" step="any"></div>
-        <div class="form-group"><label>Akt. Kurs (€)</label><input type="number" id="add-price" placeholder="wird abgerufen" min="0" step="any"></div>
         <div class="form-group"><label>Dividende / Anteil / Jahr (€)</label><input type="number" id="add-div" placeholder="3.06" min="0" step="any"></div>
         <div class="form-group"><label>Div.-Wachstum % p.a.</label><input type="number" id="add-growth" placeholder="3.0" min="0" max="30" step="0.1"></div>
       </div>
@@ -340,15 +365,47 @@
   </div>
 </div>
 
+<!-- Cash Modal -->
+<div class="modal-bg" id="cash-modal">
+  <div class="modal">
+    <h3>Cash-Position</h3>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Verfügbares Cash (€)</label>
+        <input type="number" id="cash-input" placeholder="5000" min="0" step="any">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="document.getElementById('cash-modal').classList.remove('open')">Abbrechen</button>
+      <button class="btn-primary" style="margin:0" onclick="saveCash()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Analysis Modal -->
+<div class="modal-bg" id="ai-modal">
+  <div class="ai-modal">
+    <h3 id="ai-modal-title">✦ KI-Analyse</h3>
+    <div id="ai-modal-body">
+      <div class="ai-loading"><span class="spinner"></span> Analysiere…</div>
+    </div>
+    <div style="margin-top:1rem;text-align:right">
+      <button class="btn-sec" style="width:auto;padding:7px 16px" onclick="document.getElementById('ai-modal').classList.remove('open')">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<div class="finviz-tooltip" id="finviz-tooltip"><div class="finviz-tooltip-label" id="finviz-label"></div><img id="finviz-img" src="" alt="Chart"></div>
 <div class="toast" id="toast"></div>
 
 <script>
 const SB_URL  = 'https://mpuywzmwlcuywyakrkpn.supabase.co';
 const SB_KEY  = 'sb_publishable_bptsJcXInXzqoVHXkiIZ3g_YgjmpRxf';
 const FH_KEY  = 'd8a3cr1r01qhv1v01qa0d8a3cr1r01qhv1v01qag';
-const AV_KEY  = 'WEEHXGBT7OURNGUD';
+const AV_KEY   = 'WEEHXGBT7OURNGUD';
+const GROQ_KEY = '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';
 const TAX_DEFAULT = 26.375;
-const GOAL = 24000;
+// GOAL is now dynamic – read from fc-goal input
 const ARC  = 362; // arc length of gauge semicircle (π * r=115)
 
 const MONTHS     = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
@@ -364,7 +421,9 @@ function saveFcSettings(){
     year:  document.getElementById('fc-year').value,
     yield: document.getElementById('fc-yield').value,
     tax:   document.getElementById('fc-tax').value,
-    pg:    document.getElementById('fc-pgrowth').value
+    pg:    document.getElementById('fc-pgrowth').value,
+    yg:    document.getElementById('fc-yield-growth').value,
+    goal:  document.getElementById('fc-goal').value
   };
   localStorage.setItem(FC_KEY, JSON.stringify(s));
 }
@@ -375,7 +434,9 @@ function loadFcSettings(){
     if(s.year)  document.getElementById('fc-year').value   = s.year;
     if(s.yield) document.getElementById('fc-yield').value  = s.yield;
     if(s.tax)   document.getElementById('fc-tax').value    = s.tax;
-    if(s.pg)    document.getElementById('fc-pgrowth').value= s.pg;
+    if(s.pg)    document.getElementById('fc-pgrowth').value    = s.pg;
+    if(s.yg)    document.getElementById('fc-yield-growth').value = s.yg;
+    if(s.goal){ const raw=parseFloat(String(s.goal).replace(/\./g,'').replace(',','.'))||24000; document.getElementById('fc-goal').value=raw.toLocaleString('de-DE'); }
   }catch(e){}
 }
 
@@ -513,48 +574,52 @@ async function fetchAllPrices(){
 }
 
 // ── Forecast calculation ───────────────────────────────────────────────
-function calcForecast(positions, reinvestYieldPct, targetYear, taxPct, priceGrowthPct){
-  const currentYear  = new Date().getFullYear();
-  const years        = Math.max(0, targetYear - currentYear);
-  const taxRate      = taxPct / 100;
-  const reinvestRate = reinvestYieldPct / 100;
-  const priceGrowth  = priceGrowthPct / 100;
+function calcForecast(positions, reinvestYieldPct, yieldGrowthPct, targetYear, taxPct, priceGrowthPct){
+  const currentYear = new Date().getFullYear();
+  const years       = Math.max(0, targetYear - currentYear);
+  const taxRate     = taxPct / 100;
+  const baseRate    = reinvestYieldPct / 100;
+  const yieldGrowth = yieldGrowthPct / 100;
+  const priceGrowth = priceGrowthPct / 100;
+  const currentDepot= positions.reduce((s,p)=>s+Number(p.shares)*Number(p.price||0),0);
 
-  // Current depot value of original positions
-  const currentDepot = positions.reduce((s,p)=>s+Number(p.shares)*Number(p.price||0),0);
-
-  // reinvestedCapital wächst jedes Jahr:
-  // (a) Kursgewinne auf bestehendes reinvestiertes Kapital
-  // (b) neue Nettodividenden aus organischem Wachstum + Dividenden auf reinvestiertes Kapital
   let reinvestedCapital = 0;
+  let cumulativePayout  = 0; // Summe aller Bruttoausschüttungen über den Prognosezeitraum
 
   for(let t=1; t<=years; t++){
+    // Wiederanlagedividende wächst jedes Jahr um yieldGrowth
+    const currentRate = baseRate * Math.pow(1 + yieldGrowth, t-1);
+
     // Organische Dividenden der Originalpositionen
     const organicGross = positions.reduce((sum,p)=>{
       const g = (Number(p.div_growth)||0) / 100;
       return sum + Number(p.shares) * Number(p.div_per_share) * Math.pow(1+g, t);
     }, 0);
-    // Dividenden auf bereits reinvestiertes Kapital
-    const reinvestGross = reinvestedCapital * reinvestRate;
-    // Nettodividenden nach Steuer
-    const netDiv = (organicGross + reinvestGross) * (1 - taxRate);
-    // Reinvestiertes Kapital wächst durch Kursgewinne UND neue Einlagen
+    // Dividenden auf reinvestiertes Kapital (zum wachsenden Satz)
+    const reinvestGross = reinvestedCapital * currentRate;
+    const totalGross    = organicGross + reinvestGross;
+
+    // Kumulative Gesamtausschüttung (Brutto)
+    cumulativePayout += totalGross;
+
+    // Nettodividenden nach Steuer → reinvestieren + Kursgewinne
+    const netDiv = totalGross * (1 - taxRate);
     reinvestedCapital = reinvestedCapital * (1 + priceGrowth) + netDiv;
   }
 
-  // Jahresdividende im Zieljahr
-  const finalOrganic    = positions.reduce((sum,p)=>{
+  // Jahresdividende im Zieljahr (mit gewachsenem Wiederanlagedividende-Satz)
+  const finalRate    = baseRate * Math.pow(1 + yieldGrowth, Math.max(0,years-1));
+  const finalOrganic = positions.reduce((sum,p)=>{
     const g = (Number(p.div_growth)||0) / 100;
     return sum + Number(p.shares) * Number(p.div_per_share) * Math.pow(1+g, years);
   }, 0);
-  const finalReinvestDiv = reinvestedCapital * reinvestRate;
-
-  // Depot-Endwert = Originalpositionen (Kursgewinn) + reinvestiertes Kapital (bereits kompoundiert)
-  const depotEndValue = Math.round(currentDepot * Math.pow(1+priceGrowth, years) + reinvestedCapital);
+  const finalReinvestDiv = reinvestedCapital * finalRate;
+  const depotEndValue    = Math.round(currentDepot * Math.pow(1+priceGrowth, years) + reinvestedCapital);
 
   return {
-    annualDiv:      Math.round(finalOrganic + finalReinvestDiv),
-    depotEndValue
+    annualDiv:        Math.round(finalOrganic + finalReinvestDiv),
+    depotEndValue,
+    cumulativePayout: Math.round(cumulativePayout)
   };
 }
 
@@ -564,7 +629,7 @@ function needleXY(pct, len=90, cx=150, cy=150){
   return { x2:(cx+len*Math.cos(rad)).toFixed(1), y2:(cy+len*Math.sin(rad)).toFixed(1) };
 }
 
-function updateGauge(annual, forecast, targetYear){
+function updateGauge(annual, forecast, targetYear, GOAL){
   const pct = Math.min(annual/GOAL, 1);
   const pctFc = Math.min(forecast/GOAL, 1);
   const fill = pct * ARC;
@@ -599,7 +664,7 @@ async function addPosition(){
   const currency=document.getElementById('add-currency').value;
   const shares  =parseFloat(document.getElementById('add-shares').value);
   const purchase=parseFloat(document.getElementById('add-purchase').value)||0;
-  const price   =parseFloat(document.getElementById('add-price').value)||0;
+  const price   = 0; // auto-fetched
   const div     =parseFloat(document.getElementById('add-div').value)||0;
   const growth  =parseFloat(document.getElementById('add-growth').value)||0;
   if(!name||isNaN(shares)||shares<=0){ showToast('Bitte Name und Anteile angeben.','err'); return; }
@@ -607,7 +672,7 @@ async function addPosition(){
   try{
     const res=await sbPost('depot_positions',{name,ticker,currency,shares,purchase_price:purchase,price,div_per_share:div,div_growth:growth,logo_url:''});
     positions.push(res[0]);
-    ['add-name','add-ticker','add-shares','add-purchase','add-price','add-div','add-growth'].forEach(id=>document.getElementById(id).value='');
+    ['add-name','add-ticker','add-shares','add-purchase','add-div','add-growth'].forEach(id=>document.getElementById(id).value='');
     showToast('Position gespeichert ✓'); render();
     if(ticker){
       await fetchFxRate();
@@ -784,11 +849,13 @@ function render(){
   const received   = Math.round(payments.filter(p=>p.year===curYear).reduce((s,p)=>s+Number(p.amount),0));
 
   // Forecast params
+  const GOAL      = parseFloat((document.getElementById('fc-goal').value||'24000').replace(/\./g,'').replace(',','.'))||24000;
   const fcYear    = parseInt(document.getElementById('fc-year').value)||2047;
   const fcYield   = parseFloat(document.getElementById('fc-yield').value)||4.0;
   const fcTax     = parseFloat(document.getElementById('fc-tax').value)||TAX_DEFAULT;
-  const fcPGrowth = parseFloat(document.getElementById('fc-pgrowth').value)||3.0;
-  const fcResult      = positions.length>0 ? calcForecast(positions, fcYield, fcYear, fcTax, fcPGrowth) : {annualDiv:0,depotEndValue:0};
+  const fcPGrowth    = parseFloat(document.getElementById('fc-pgrowth').value)||3.0;
+  const fcYieldGrowth = parseFloat(document.getElementById('fc-yield-growth').value)||0;
+  const fcResult      = positions.length>0 ? calcForecast(positions, fcYield, fcYieldGrowth, fcYear, fcTax, fcPGrowth) : {annualDiv:0,depotEndValue:0,cumulativePayout:0};
   const forecast      = fcResult.annualDiv;
   const depotForecast = fcResult.depotEndValue;
 
@@ -808,7 +875,9 @@ function render(){
   document.getElementById('kpi-monthly').textContent  = fmtEur0(annualDiv/12,true);
   document.getElementById('kpi-yield').textContent    = depotYield>0?fmtPct(depotYield):'—';
 
-  updateGauge(annualDiv, forecast, fcYear);
+  updateGauge(annualDiv, forecast, fcYear, GOAL);
+
+
 
   // Table
   const tw=document.getElementById('table-wrap');
@@ -824,7 +893,7 @@ function render(){
       const yc     = yldPct>=5?'yield-high':yldPct>=3?'yield-med':'yield-low';
       const growth = Number(p.div_growth)||0;
       return `<tr>
-        <td><div class="ticker-cell">${logoHtml(p)}<div><div class="ticker-text">${p.ticker||'—'}</div><div class="name-sub">${p.name}</div></div></div></td>
+        <td><div class="ticker-cell">${logoHtml(p)}<div><div class="ticker-text ticker-hover" onmouseenter="showFinviz(event,'${p.ticker||''}','${p.name}')" onmouseleave="hideFinviz()" onclick="openFinviz('${p.ticker||''}',event)">${p.ticker||'—'}</div><div class="name-sub">${p.name}</div></div></div></td>
         <td>${Number(p.shares).toLocaleString('de-DE',{maximumFractionDigits:4})}</td>
         <td>${Number(p.purchase_price)>0?fmtEur(p.purchase_price):'—'}</td>
         <td>${costVal>0?fmtEur0(costVal):'—'}</td>
@@ -835,7 +904,7 @@ function render(){
         <td>${yldPct>0?`<span class="yield-pill ${yc}">${fmtPct(yldPct)}</span>`:'—'}</td>
         <td>${fmtEur0(annDiv)}</td>
         <td>${growth>0?`<span class="growth-badge">+${growth.toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1})} %</span>`:'—'}</td>
-        <td style="white-space:nowrap"><button class="action-btn" onclick="openEdit(${p.id})">✎</button><button class="action-btn del" onclick="openDelete(${p.id})" style="margin-left:4px">✕</button></td>
+        <td style="white-space:nowrap"><button class="action-btn" style="color:var(--gold);border-color:rgba(245,200,66,0.3);margin-right:4px" onclick="analyzePosition(${p.id})">✦</button><button class="action-btn" onclick="openEdit(${p.id})">✎</button><button class="action-btn del" onclick="openDelete(${p.id})" style="margin-left:4px">✕</button></td>
       </tr>`;
     }).join('');
     tw.innerHTML=`<table class="depot-table"><thead><tr>
@@ -857,9 +926,158 @@ function render(){
 }
 
 // ── Forecast inputs live update ────────────────────────────────────────
-['fc-year','fc-yield','fc-tax','fc-pgrowth'].forEach(id=>{
+['fc-year','fc-yield','fc-tax','fc-pgrowth','fc-yield-growth'].forEach(id=>{
   document.getElementById(id).addEventListener('input', ()=>{ saveFcSettings(); render(); });
 });
+
+// ── Groq AI ───────────────────────────────────────────────────────────
+async function callGroq(systemPrompt, userPrompt){
+  const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+GROQ_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'llama-3.3-70b-versatile',
+      messages:[
+        {role:'system',content:systemPrompt},
+        {role:'user',content:userPrompt}
+      ],
+      max_tokens:500,
+      temperature:0.7
+    })
+  });
+  if(!r.ok) throw new Error('Groq HTTP '+r.status);
+  const d=await r.json();
+  return d.choices?.[0]?.message?.content||'Keine Antwort erhalten.';
+}
+
+function openAiModal(title){
+  document.getElementById('ai-modal-title').textContent='✦ '+title;
+  document.getElementById('ai-modal-body').innerHTML='<div class="ai-loading"><span class="spinner"></span> Analysiere…</div>';
+  document.getElementById('ai-modal').classList.add('open');
+}
+
+
+
+async function analyzePosition(id){
+  const p = positions.find(x=>x.id===id); if(!p) return;
+  openAiModal(p.name + (p.ticker ? '  ·  ' + p.ticker : ''));
+
+  const system = `Du bist ein präziser Finanzanalyst. Antworte ausschliesslich auf Deutsch, strukturiert, ohne Haftungshinweise und ohne Hinweise auf Datengrenzen.`;
+
+  const user = `Analysiere ${p.name}${p.ticker ? ' (Ticker: '+p.ticker+')' : ''} für einen langfristigen Dividendeninvestor.
+
+Beantworte folgende drei Punkte:
+
+1. AKTUELLE DIVIDENDENRENDITE
+Nenne die aktuelle Dividendenrendite (TTM). Falls mehrere Klassen: die relevante. Einordnung: günstig/fair/teuer im historischen Vergleich.
+
+2. DIVIDENDENWACHSTUM (5-JAHRES-DURCHSCHNITT)
+Durchschnittliches jährliches Dividendenwachstum der letzten 5 Jahre (CAGR). Trend: beschleunigend oder abflachend? Nachhaltigkeit anhand Ausschüttungsquote / Payout Ratio.
+
+3. ABSTAND ZUR 200-TAGE-LINIE
+Aktueller Kurs im Verhältnis zur 200-Tage-Linie: prozentualer Abstand, Tendenz (Kurs darüber oder darunter). Technische Einordnung: befindet sich die Aktie in einem Aufwärts- oder Abwärtstrend? Historisch: Wie verhält sich die Aktie typischerweise nach Abweichungen von dieser Linie?
+
+Maximal 200 Wörter gesamt.`;
+
+  try{
+    const response = await callGroq(system, user);
+    const lines = response.split(String.fromCharCode(10));
+    const html = lines.map(line => {
+      if(/^1\.|^2\.|^3\./.test(line.trim())) return `<div class="ai-section-label" style="margin-top:0.9rem">${line.trim()}</div>`;
+      if(line.trim()==='') return '';
+      return `<div class="ai-section-body">${line}</div>`;
+    }).join('');
+    document.getElementById('ai-modal-body').innerHTML = html || `<div class="ai-response">${response}</div>`;
+  }catch(e){
+    document.getElementById('ai-modal-body').innerHTML = `<div class="ai-response" style="color:var(--red)">Fehler: ${e.message}</div>`;
+  }
+}
+
+// ── Finviz Chart Tooltip ──────────────────────────────────────────────
+function finvizTicker(ticker){
+  if(!ticker) return null;
+  // Strip exchange suffix for Finviz (e.g. MUV2.FRK → MUV2, VDIV.XETR → VDIV)
+  return ticker.split('.')[0].split(':')[0].toUpperCase();
+}
+
+function showFinviz(event, ticker, name){
+  if(!ticker) return;
+  const ft = finvizTicker(ticker);
+  const tooltip = document.getElementById('finviz-tooltip');
+  const img = document.getElementById('finviz-img');
+  const label = document.getElementById('finviz-label');
+
+  label.textContent = name + ' · Wochenchart (Finviz)';
+  img.src = `https://finviz.com/chart.ashx?t=${ft}&ty=c&ta=1&p=w&s=l`;
+  img.onerror = () => {
+    img.style.display='none';
+    label.textContent = ft + ' – kein Finviz-Chart verfügbar (ggf. kein US-Ticker)';
+  };
+  img.onload = () => { img.style.display='block'; };
+
+  positionFinviz(event);
+  tooltip.classList.add('visible');
+}
+
+function positionFinviz(event){
+  const tooltip = document.getElementById('finviz-tooltip');
+  const margin = 12;
+  const tw = 424, th = 340;
+  let x = event.clientX + margin;
+  let y = event.clientY + margin;
+  if(x + tw > window.innerWidth)  x = event.clientX - tw - margin;
+  if(y + th > window.innerHeight) y = event.clientY - th - margin;
+  tooltip.style.left = Math.max(0, x) + 'px';
+  tooltip.style.top  = Math.max(0, y) + 'px';
+}
+
+function openFinviz(ticker, event){
+  event.stopPropagation();
+  if(!ticker) return;
+  const ft = finvizTicker(ticker);
+  window.open(`https://finviz.com/quote.ashx?t=${ft}`, '_blank');
+}
+
+function hideFinviz(){
+  document.getElementById('finviz-tooltip').classList.remove('visible');
+}
+
+// Update position while hovering
+document.addEventListener('mousemove', e => {
+  const t = document.getElementById('finviz-tooltip');
+  if(t.classList.contains('visible')) positionFinviz(e);
+});
+
+// ── Cash Position ─────────────────────────────────────────────────────
+let cashValue = 0;
+
+function editCash(){
+  document.getElementById('cash-input').value = cashValue||'';
+  document.getElementById('cash-modal').classList.add('open');
+}
+
+function saveCash(){
+  cashValue = parseFloat(document.getElementById('cash-input').value)||0;
+  localStorage.setItem('ddepot_cash_v1', cashValue);
+  document.getElementById('cash-modal').classList.remove('open');
+  updateCashKpi();
+}
+
+function updateCashKpi(){
+  document.getElementById('kpi-cash').textContent = Math.round(cashValue).toLocaleString('de-DE');
+}
+
+function loadCash(){
+  cashValue = parseFloat(localStorage.getItem('ddepot_cash_v1'))||0;
+  updateCashKpi();
+}
+
+// ── Goal input formatting ─────────────────────────────────────────────
+function formatGoalInput(input){
+  const raw = input.value.replace(/\D/g,'');
+  if(raw) input.value = parseInt(raw).toLocaleString('de-DE');
+  saveFcSettings(); render();
+}
 
 // ── Init ───────────────────────────────────────────────────────────────
 async function init(){
@@ -876,6 +1094,7 @@ async function init(){
     setSyncState('ok');
     document.getElementById('btn-refresh').disabled=false;
     loadFcSettings();
+    loadCash();
     await fetchFxRate();
     render();
   }catch(e){
