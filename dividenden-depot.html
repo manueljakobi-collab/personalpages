@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Dividenden-Depot</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1117'/%3E%3C!-- Gauge arc track --%3E%3Cpath d='M6 22 A11 11 0 0 1 26 22' fill='none' stroke='%231e2333' stroke-width='3' stroke-linecap='round'/%3E%3C!-- Gauge arc fill --%3E%3Cpath d='M6 22 A11 11 0 0 1 26 22' fill='none' stroke='%23c8f064' stroke-width='3' stroke-linecap='round' stroke-dasharray='22 35'/%3E%3C!-- Needle --%3E%3Cline x1='16' y1='22' x2='21' y2='13' stroke='%23c8f064' stroke-width='1.8' stroke-linecap='round'/%3E%3C!-- Center dot --%3E%3Ccircle cx='16' cy='22' r='2' fill='%23c8f064'/%3E%3C!-- Euro sign --%3E%3Ctext x='9' y='29' font-size='6' fill='%23f5c842' font-family='sans-serif' font-weight='bold'%3E€%3C/text%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -54,8 +57,8 @@
   .full-card{margin-bottom:16px;}
 
   /* Gauge */
-  .gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0.25rem 0;}
-  .gauge-svg{width:100%;max-width:300px;}
+  .gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;}
+  .gauge-svg{width:100%;height:auto;display:block;}
   .gauge-vals{display:flex;flex-direction:column;align-items:center;gap:2px;}
   .gauge-current{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;}
   .gauge-forecast{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;color:var(--gold);}
@@ -63,7 +66,7 @@
   .gauge-label-forecast{font-size:11px;color:var(--gold);opacity:0.8;}
   .gauge-legend{display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--text3);}
   .bn-switch{display:flex;align-items:center;gap:0;background:var(--bg3);border:0.5px solid var(--border2);border-radius:20px;padding:2px;margin-top:10px;}
-  .bn-btn{font-size:11px;font-family:'DM Mono',monospace;padding:3px 12px;border-radius:16px;cursor:pointer;border:none;background:none;color:var(--text3);transition:all 0.2s;}
+  .bn-btn{font-size:11px;font-family:'DM Mono',monospace;padding:3px 0;border-radius:16px;cursor:pointer;border:none;background:none;color:var(--text3);transition:all 0.2s;flex:1;text-align:center;}
   .bn-btn.active{background:var(--accent);color:#0f1117;font-weight:500;}
   .gauge-legend-item{display:flex;align-items:center;gap:5px;}
   .gauge-legend-dot{width:10px;height:3px;border-radius:2px;}
@@ -74,7 +77,7 @@
   .forecast-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
   .fi-group{display:flex;flex-direction:column;gap:3px;}
   .fi-group label{font-size:9px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .fi-group input{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:4px 6px;font-size:12px;font-family:'DM Mono',monospace;outline:none;width:100%;min-width:0;}
+  .fi-group input{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--radius-sm);padding:2px 5px;font-size:11px;font-family:'DM Mono',monospace;outline:none;width:100%;min-width:0;}
   .fi-group input:focus{border-color:var(--gold);}
   .fi-hint{font-size:10px;color:var(--text3);margin-top:6px;grid-column:1/-1;}
 
@@ -173,6 +176,9 @@
 <div class="shell">
 
   <div class="top-bar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="data:image/png;base64,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" alt="Scalable Capital" style="height:42px;width:42px;border-radius:8px;object-fit:cover;">
+    </div>
     <h1>Dividenden<span>-Depot</span></h1>
     <div class="sync-indicator">
       <div class="sync-dot loading" id="sync-dot"></div>
@@ -198,32 +204,69 @@
     <div class="kpi"><div class="kpi-label">Depot-Rendite</div><div class="kpi-value" id="kpi-yield">—</div></div>
   </div>
 
-  <!-- Gauge + Add Form -->
-  <div class="main-grid">
+
+  <!-- Anlagestrategie (aufklappbar) -->
+  <div class="full-card" style="margin-bottom:16px;">
+    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <button onclick="toggleStrategy()" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.25rem;background:none;border:none;cursor:pointer;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-block;width:3px;height:12px;background:var(--accent);border-radius:2px;"></span>
+          Anlagestrategie
+        </span>
+        <span id="strategy-arrow" style="font-size:11px;color:var(--text3);transition:transform 0.2s;">▼</span>
+      </button>
+      <div id="strategy-body" style="display:none;padding:0 1.25rem 1.25rem;">
+        <textarea id="strategy-text" style="width:100%;min-height:200px;background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);font-size:13px;font-family:'DM Sans',sans-serif;line-height:1.85;border-radius:var(--radius-sm);padding:0.75rem;resize:vertical;outline:none;" placeholder="Strategie eingeben…"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;gap:8px;align-items:center;">
+          <span id="strategy-save-hint" style="font-size:11px;color:var(--text3);"></span>
+          <button class="btn-primary" style="width:auto;padding:6px 16px;margin:0;" onclick="saveStrategy()">Speichern</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-Spalten-Grid: Prognose | Tacho | Position hinzufügen -->
+  <div style="display:grid;grid-template-columns:1fr 5.5fr 5.5fr;gap:16px;margin-bottom:16px;">
+
+    <!-- Kachel 1: Prognose-Einstellungen -->
     <div class="card">
-      <div class="card-title">Dividenden-Tachometer</div>
-      <div class="gauge-wrap">
-        <svg class="gauge-svg" viewBox="0 0 300 170" id="gauge-svg">
-          <!-- Track -->
-          <path d="M 35 150 A 115 115 0 0 1 265 150" fill="none" stroke="#1e2333" stroke-width="20" stroke-linecap="round"/>
-          <!-- Current fill -->
-          <path id="gauge-fill" d="M 35 150 A 115 115 0 0 1 265 150" fill="none" stroke="#c8f064" stroke-width="20" stroke-linecap="round" stroke-dasharray="0 362"/>
-          <!-- Forecast fill (thinner, behind current) -->
-          <path id="gauge-fill-fc" d="M 35 150 A 115 115 0 0 1 265 150" fill="none" stroke="#f5c842" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 362" opacity="0.5"/>
-          <!-- Labels -->
-          <text x="25" y="168" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle">0</text>
-          <text x="275" y="168" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle" id="gauge-max-label">24k</text>
-          <text x="150" y="48" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle" id="gauge-mid-label">12k</text>
-          <!-- Forecast needle -->
-          <line id="gauge-needle-fc" x1="150" y1="150" x2="150" y2="60" stroke="#f5c842" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.7"/>
-          <!-- Current needle -->
-          <line id="gauge-needle" x1="150" y1="150" x2="150" y2="60" stroke="#c8f064" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="150" cy="150" r="5" fill="#c8f064" id="gauge-center"/>
+      <div class="card-title">Prognose</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="fi-group"><label>Zieljahr</label><input type="number" id="fc-year" value="2047" min="2025" max="2100"></div>
+        <div class="fi-group"><label>Div.-Ziel €/Jahr</label><input type="text" id="fc-goal" value="24.000" style="font-family:'DM Mono',monospace;" oninput="formatGoalInput(this)"></div>
+        <div style="height:0.5px;background:var(--border);margin:2px 0;"></div>
+        <div class="fi-group"><label>WA-Dividende %</label><input type="number" id="fc-yield" value="4.00" min="0" max="20" step="0.01"></div>
+        <div class="fi-group"><label>WA-Div. Wachstum %</label><input type="number" id="fc-yield-growth" value="2.0" min="0" max="15" step="0.1"></div>
+        <div style="height:0.5px;background:var(--border);margin:2px 0;"></div>
+        <div class="fi-group"><label>Steuer %</label><input type="number" id="fc-tax" value="26.375" min="0" max="50" step="0.001"></div>
+        <div class="fi-group"><label>Kurswachstum %</label><input type="number" id="fc-pgrowth" value="3.0" min="0" max="20" step="0.1"></div>
+      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:8px;line-height:1.6;">KeSt 25%+Soli 5,5%=26,375% · Yield on Cost Methode</div>
+      <div class="bn-switch" style="margin-top:12px;width:100%;">
+        <button class="bn-btn active" id="btn-brutto" onclick="setBNMode('brutto')">Brutto</button>
+        <button class="bn-btn" id="btn-netto" onclick="setBNMode('netto')">Netto</button>
+      </div>
+    </div>
+
+    <!-- Kachel 2: Dividenden-Tachometer -->
+    <div class="card">
+      <div class="card-title" style="width:100%;">Dividenden-Tachometer</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;max-width:280px;margin:auto;">
+        <svg class="gauge-svg" viewBox="0 0 300 248" id="gauge-svg">
+          <path d="M 55 215 A 110 110 0 1 1 245 215" fill="none" stroke="#1e2333" stroke-width="20" stroke-linecap="round"/>
+          <path id="gauge-fill" d="M 55 215 A 110 110 0 1 1 245 215" fill="none" stroke="#c8f064" stroke-width="20" stroke-linecap="round" stroke-dasharray="0 461"/>
+          <path id="gauge-fill-fc" d="M 55 215 A 110 110 0 1 1 245 215" fill="none" stroke="#f5c842" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 461" opacity="0.5"/>
+          <text x="28" y="244" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle">0</text>
+          <text x="272" y="244" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle" id="gauge-max-label">24k</text>
+          <text x="150" y="40" fill="#4e5368" font-size="11" font-family="DM Mono,monospace" text-anchor="middle" id="gauge-mid-label">12k</text>
+          <line id="gauge-needle-fc" x1="150" y1="160" x2="150" y2="70" stroke="#f5c842" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.7"/>
+          <line id="gauge-needle" x1="150" y1="160" x2="150" y2="70" stroke="#c8f064" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="150" cy="160" r="5" fill="#c8f064" id="gauge-center"/>
         </svg>
         <div class="gauge-vals">
           <div class="gauge-current" id="gauge-val">0 €</div>
           <div class="gauge-label-current" id="gauge-label-current">Aktuell p.a.</div>
-          <div style="height:6px"></div>
+          <div style="height:2px"></div>
           <div class="gauge-forecast" id="gauge-val-fc">—</div>
           <div class="gauge-label-forecast" id="gauge-label-fc">Prognose 2047</div>
         </div>
@@ -231,45 +274,10 @@
           <div class="gauge-legend-item"><div class="gauge-legend-dot" style="background:var(--accent)"></div>Aktuell</div>
           <div class="gauge-legend-item"><div class="gauge-legend-dot" style="background:var(--gold);opacity:0.7"></div>Prognose</div>
         </div>
-        <div class="bn-switch">
-          <button class="bn-btn active" id="btn-brutto" onclick="setBNMode('brutto')">Brutto</button>
-          <button class="bn-btn" id="btn-netto" onclick="setBNMode('netto')">Netto</button>
-        </div>
-      </div>
-
-      <!-- Forecast Settings -->
-      <div class="forecast-settings">
-        <div class="forecast-settings-title">Prognose-Einstellungen</div>
-        <div class="forecast-inputs" style="grid-template-columns:repeat(6,1fr);gap:6px;">
-          <div class="fi-group">
-            <label>Zieljahr</label>
-            <input type="number" id="fc-year" value="2047" min="2025" max="2100">
-          </div>
-          <div class="fi-group" style="border-right:0.5px solid var(--border2);padding-right:6px;">
-            <label>Div.-Ziel €/Jahr</label>
-            <input type="text" id="fc-goal" value="24.000" style="font-family:'DM Mono',monospace;" oninput="formatGoalInput(this)">
-          </div>
-          <div class="fi-group">
-            <label>WA-Dividende %</label>
-            <input type="number" id="fc-yield" value="4.00" min="0" max="20" step="0.01">
-          </div>
-          <div class="fi-group" style="border-right:0.5px solid var(--border2);padding-right:6px;">
-            <label>WA-Div. Wachstum %</label>
-            <input type="number" id="fc-yield-growth" value="2.0" min="0" max="15" step="0.1">
-          </div>
-          <div class="fi-group" style="border-right:0.5px solid var(--border2);padding-right:6px;">
-            <label>Steuer %</label>
-            <input type="number" id="fc-tax" value="26.375" min="0" max="50" step="0.001">
-          </div>
-          <div class="fi-group">
-            <label>Kurswachstum %</label>
-            <input type="number" id="fc-pgrowth" value="3.0" min="0" max="20" step="0.1">
-          </div>
-          <div class="fi-hint" style="grid-column:1/-1;">KeSt 25%+Soli 5,5%=26,375% · Nettodividenden reinvestiert · Kurswachstum für Depotwert-Prognose</div>
-        </div>
       </div>
     </div>
 
+    <!-- Kachel 3: Position hinzufügen -->
     <div class="card">
       <div class="card-title">Position hinzufügen</div>
       <div class="form-grid">
@@ -289,6 +297,7 @@
       <p class="hint">Kurs & Logo werden beim Speichern abgerufen. EU-Ticker z.B. MUV2.FRK, VDIV.FRK.</p>
       <button class="btn-primary" id="btn-add-pos" onclick="addPosition()">+ Position hinzufügen</button>
     </div>
+
   </div>
 
   <!-- Portfolio Table -->
@@ -330,6 +339,8 @@
       <div class="pay-list" id="pay-list"><div class="empty-state">Lade…</div></div>
     </div>
   </div>
+
+
 </div>
 
 <!-- Edit Modal -->
@@ -413,7 +424,7 @@ const AV_KEY   = 'WEEHXGBT7OURNGUD';
 const GROQ_KEY = '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';
 const TAX_DEFAULT = 26.375;
 // GOAL is now dynamic – read from fc-goal input
-const ARC  = 362; // arc length of gauge semicircle (π * r=115)
+const ARC  = 461; // arc length of gauge 240° arc (240°/180° * π * 110)
 
 const MONTHS     = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 const MONTH_FULL = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
@@ -650,9 +661,10 @@ function calcForecast(positions, reinvestYieldPct, yieldGrowthPct, targetYear, t
 }
 
 // ── Gauge ──────────────────────────────────────────────────────────────
-function needleXY(pct, len=90, cx=150, cy=150){
-  const rad = (-180 + Math.min(pct,1) * 180) * Math.PI / 180;
-  return { x2:(cx+len*Math.cos(rad)).toFixed(1), y2:(cy+len*Math.sin(rad)).toFixed(1) };
+function needleXY(pct, len=90, cx=150, cy=160){
+  // 240° sweep: -120° (lower-left) → 0° (top) → +120° (lower-right)
+  const angle = (-120 + Math.min(pct,1) * 240) * Math.PI / 180;
+  return { x2:(cx + len*Math.sin(angle)).toFixed(1), y2:(cy - len*Math.cos(angle)).toFixed(1) };
 }
 
 function updateGauge(annual, forecast, targetYear, GOAL, taxRate, mode){
@@ -1131,6 +1143,47 @@ function formatGoalInput(input){
   saveFcSettings(); render();
 }
 
+// ── Strategy text (editable, Supabase) ────────────────────────────────
+const DEFAULT_STRATEGY = `Das Depot folgt einem einfachen, konsequenten Prinzip: kaufen, halten, reinvestieren, wiederholen. Verkauft wird ausschließlich wenn das Geschäftsmodell eines Unternehmens strukturell bricht oder die Dividende dauerhaft nicht mehr durch den laufenden Cashflow gedeckt ist. Kursrückgänge, schlechte Nachrichten, Zinsentscheidungen und Rezessionen sind keine Verkaufsgründe – sie sind Kaufgelegenheiten.
+
+Das Portfolio setzt sich aus drei Bausteinen zusammen. Den Kern bilden Compounder – Unternehmen mit langer Dividendenhistorie, starkem Dividendenwachstum und verteidigbarer Marktposition. Ihre aktuelle Rendite ist oft moderat, doch der Yield on Cost steigt über die Jahre erheblich und diese Titel bauen den langfristigen Endwert. Ergänzt werden sie durch REITs und BDCs, die mit höheren laufenden Ausschüttungen den Reinvestitionsmotor antreiben – ihre Dividenden finanzieren den kontinuierlichen Zukauf in Compounder. Der dritte Baustein sind ausschüttende ETFs wie der VanEck Morningstar Developed Markets Dividend Leaders, die breite Diversifikation ohne Einzeltitelaufwand liefern.
+
+Der Sektorfokus liegt auf Technologie, Pharma, nicht zyklischem Konsum, Defense und Energie beziehungsweise Stromerzeugung. Diese Bereiche sind strukturell getrieben – unabhängig vom Konjunkturzyklus, mit hohen Eintrittsbarrieren und planbaren Cashflows. Der Fokus ist eine Überzeugung, kein Korsett: bei signifikanten Verwerfungen in anderen Sektoren darf opportunistisch zugegriffen werden, solange die Dividendenthese trägt.
+
+Das Depot kennt keine starren Quoten, kein Rebalancing und keine erzwungenen Verkäufe wenn eine Position durch Kurszuwachs größer wird. Ausgewogen bedeutet: kein Einzeltitel dominiert so stark, dass sein Ausfall das Gesamtergebnis entscheidend beschädigt – das ist ein Urteil, keine Zahl. Der eigentliche Vorteil liegt im exponentiellen Charakter des Compoundings: der größte Teil des Endwerts entsteht in den letzten Jahren, nicht den ersten. Jede Unterbrechung durch einen Verkauf zerschneidet einen Wachstumsstrang der sich nie vollständig erholt. Geduld ist keine passive Tugend – sie ist die aktive Entscheidung, das Kapital ungestört für sich arbeiten zu lassen.`;
+
+async function saveStrategy(){
+  const text = document.getElementById('strategy-text').value;
+  const hint = document.getElementById('strategy-save-hint');
+  hint.textContent = 'Speichert…';
+  try{
+    await sbUpsert('depot_settings', {key:'strategy', value:text});
+    hint.textContent = '✓ Gespeichert';
+    setTimeout(()=>hint.textContent='', 2000);
+  }catch(e){
+    hint.textContent = 'Fehler: '+e.message;
+  }
+}
+
+async function loadStrategy(){
+  const ta = document.getElementById('strategy-text');
+  try{
+    const rows = await sbGet('depot_settings','key=eq.strategy&select=value');
+    ta.value = rows.length ? rows[0].value : DEFAULT_STRATEGY;
+  }catch(e){
+    ta.value = DEFAULT_STRATEGY;
+  }
+}
+
+// ── Strategy accordion ────────────────────────────────────────────────
+function toggleStrategy(){
+  const body = document.getElementById('strategy-body');
+  const arrow = document.getElementById('strategy-arrow');
+  const open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? '' : 'rotate(180deg)';
+}
+
 // ── Init ───────────────────────────────────────────────────────────────
 async function init(){
   document.getElementById('top-date').textContent=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});
@@ -1146,7 +1199,7 @@ async function init(){
     setSyncState('ok');
     document.getElementById('btn-refresh').disabled=false;
     loadFcSettings();
-    await Promise.all([loadCash(), loadBnMode()]);
+    await Promise.all([loadCash(), loadBnMode(), loadStrategy()]);
     await fetchFxRate();
     render();
   }catch(e){
