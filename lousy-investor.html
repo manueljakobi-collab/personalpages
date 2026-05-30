@@ -1640,8 +1640,7 @@ async function fetchEtfPrices(){
   let fetched=0, errors=[];
   for(const p of etfPositions){
     if(!p.ticker) continue;
-    // Manual price override takes priority
-    if(p.price_manual>0){ p.price=p.price_manual; continue; }
+
     try{
       let price = 0;
       const isTD = TD_SUFFIXES_ETF.some(s=>p.ticker.toUpperCase().endsWith(s.toUpperCase()));
@@ -1720,14 +1719,14 @@ function openEtfEdit(id){
   document.getElementById('etf-currency').value=p.currency||'EUR';
   document.getElementById('etf-shares').value=p.shares;
   document.getElementById('etf-purchase').value=p.purchase_price;
-  document.getElementById('etf-price-manual').value=p.price_manual||'';
+  document.getElementById('etf-price-manual').value=p.price||'';
   document.getElementById('etf-modal-title').textContent='ETF bearbeiten';
   document.getElementById('etf-modal').classList.add('open');
 }
 async function saveEtf(){
   const id=document.getElementById('etf-edit-id').value;
   const priceManual=parseFloat(document.getElementById('etf-price-manual').value)||0;
-const data={name:document.getElementById('etf-name').value.trim(),ticker:document.getElementById('etf-ticker').value.trim().toUpperCase(),currency:document.getElementById('etf-currency').value,shares:parseFloat(document.getElementById('etf-shares').value)||0,purchase_price:parseFloat(document.getElementById('etf-purchase').value)||0,price:priceManual||0,price_manual:priceManual};
+const data={name:document.getElementById('etf-name').value.trim(),ticker:document.getElementById('etf-ticker').value.trim().toUpperCase(),currency:document.getElementById('etf-currency').value,shares:parseFloat(document.getElementById('etf-shares').value)||0,purchase_price:parseFloat(document.getElementById('etf-purchase').value)||0,price:priceManual||0};
   if(!data.name||!data.shares){ showToast('Name und Anteile erforderlich','err'); return; }
   try{
     if(id) await sbPut('etf_positions',id,data); else await sbPost('etf_positions',data);
