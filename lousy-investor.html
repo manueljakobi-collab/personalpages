@@ -889,12 +889,23 @@ async function fetchLogoFH(ticker){
   }catch(e){ return ''; }
 }
 async function fetchQuoteAV(ticker){
-  const r=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(ticker)}&apikey=${AV_KEY}`);
-  if(!r.ok) throw new Error('AV HTTP '+r.status);
-  const d=await r.json();
-  const price=parseFloat(d?.['Global Quote']?.['05. price']);
-  if(!price||isNaN(price)) throw new Error('Kein Kurs (Alpha Vantage)');
-  return price;
+  // Try Alpha Vantage first
+  try{
+    const r=await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(ticker)}&apikey=${AV_KEY}`);
+    if(r.ok){
+      const d=await r.json();
+      const price=parseFloat(d?.['Global Quote']?.['05. price']);
+      if(price&&!isNaN(price)) return price;
+    }
+  }catch(e){}
+  // Fallback: Stooq (convert .FRK → .de, .LON → .l, .TRT → .ca)
+  const stooqTicker = ticker.toLowerCase()
+    .replace('.frk','.de').replace('.fra','.de')
+    .replace('.lon','.l').replace('.lse','.l')
+    .replace('.trt','.ca').replace('.tsx','.ca');
+  const price2 = await fetchEUPrice(stooqTicker);
+  if(price2>0) return price2;
+  throw new Error('Kein Kurs für '+ticker);
 }
 async function fetchQuote(ticker){ return isIntl(ticker)?fetchQuoteAV(ticker):fetchQuoteFH(ticker); }
 async function fetchProfile(ticker){ return isIntl(ticker)?Promise.resolve(''):fetchLogoFH(ticker); }
