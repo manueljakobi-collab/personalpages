@@ -1645,8 +1645,7 @@ async function fetchEtfPrices(){
       let price = 0;
       const isTD = TD_SUFFIXES_ETF.some(s=>p.ticker.toUpperCase().endsWith(s.toUpperCase()));
       if(isTD){
-        price = await fetchYFPrice(p.ticker);       // Yahoo Finance (primary)
-        if(!price) price = await fetchTDPrice(p.ticker); // Twelve Data (fallback)
+        price = await fetchEUPrice(p.ticker);
         if(!price) errors.push(`${p.ticker}: kein Kurs`);
       } else if(p.ticker.includes('.')){
         const r = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${p.ticker}&apikey=${AV_KEY}`);
@@ -2078,8 +2077,7 @@ async function fetchIbPrices(){
       let raw = 0;
       const isTD = TD_SUFFIXES.some(s=>p.ticker.toUpperCase().endsWith(s.toUpperCase()));
       if(isTD){
-        raw = await fetchYFPrice(p.ticker);          // Yahoo Finance (primary)
-        if(!raw) raw = await fetchTDPrice(p.ticker); // Twelve Data (fallback)
+        raw = await fetchEUPrice(p.ticker);
       } else if(p.ticker.includes('.')){
         const r = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${p.ticker}&apikey=${AV_KEY}`);
         const d = await r.json();
@@ -2257,25 +2255,47 @@ async function loadFcSettings(prefix, updateFn){
 }
 
 
-// ── Yahoo Finance price fetch (via CORS proxies) ─────────────────────────
-async function fetchYFPrice(ticker){
+// ── EU/International price fetch ─────────────────────────────────────────
+// Stooq.com: free, no key, covers XETRA (.DE), LSE (.L), TSX (.TRT/.TO)
+async function fetchEUPrice(ticker){
+  // Stooq uses lowercase tickers, .TRT → .CA for Toronto
+  const stooqTicker = ticker.toLowerCase()
+    .replace('.trt', '.ca')   // Alpha Vantage TSX format → Stooq
+    .replace('.frk', '.de')   // Alpha Vantage Frankfurt → Stooq
+    .replace('.lon', '.l');   // Alpha Vantage London → Stooq
+
+  // Try Stooq CSV (works from any origin)
+  try{
+    const url = `https://stooq.com/q/l/?s=${encodeURIComponent(stooqTicker)}&f=sd2t2ohlcv&h&e=csv`;
+    const r = await fetch(url);
+    if(r.ok){
+      const text = await r.text();
+      const lines = text.trim().split('\n');
+      if(lines.length >= 2){
+        const cols = lines[1].split(',');
+        const close = parseFloat(cols[6]); // Close price is 7th column
+        if(close > 0){ console.log(`Stooq ✓ ${ticker} = ${close}`); return close; }
+      }
+    }
+  }catch(e){}
+
+  // Fallback: Yahoo Finance via CORS proxies
   const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=5d`;
-  const attempts = [
+  for(const proxy of [
     `https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`,
-    yfUrl, // direct (works from https://)
-  ];
-  for(const url of attempts){
+    yfUrl,
+  ]){
     try{
-      const r = await fetch(url, {headers:{'Accept':'application/json'}});
+      const r = await fetch(proxy, {headers:{'Accept':'application/json'}});
       if(!r.ok) continue;
-      const text = await r.text();
-      const d = JSON.parse(text);
+      const d = JSON.parse(await r.text());
       const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice || 0;
       if(price > 0){ console.log(`YF ✓ ${ticker} = ${price}`); return price; }
     }catch(e){}
   }
-  console.warn(`YF: no price for ${ticker}`);
+
+  console.warn(`No price found for ${ticker}`);
   return 0;
 }
 const TD_EXCHANGE_MAP = {
