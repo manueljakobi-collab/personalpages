@@ -249,7 +249,8 @@
       <span id="sync-label">Verbinde…</span>
     </div>
     <span class="fx-badge" id="fx-badge">EUR/USD: –</span>
-    <button class="btn-refresh" id="btn-refresh" onclick="refreshCurrentTab()" id="btn-refresh">
+    <span id="status-bar" style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;"></span>
+  <button class="btn-refresh" id="btn-refresh" onclick="refreshCurrentTab()" id="btn-refresh">
       <span id="refresh-icon">↻</span> Kurse aktualisieren
     </button>
     <div class="top-date" id="top-date"></div>
@@ -811,7 +812,12 @@ async function sbUpsert(t,b){
 function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show '+type;
-  setTimeout(()=>t.className='toast',3000);
+  t.onclick=()=>t.className='toast';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.className='toast', type==='err'?12000:5000);
+  // Also log to status bar
+  const sb=document.getElementById('status-bar');
+  if(sb){ sb.textContent=msg; sb.style.color=type==='err'?'var(--red)':'var(--teal)'; }
 }
 function setSyncState(s){
   const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');
@@ -1656,7 +1662,7 @@ async function fetchEtfPrices(){
         const d = await r.json();
         price = (d.c||0) * (p.currency==='USD'?fx:1);
       }
-      if(price>0){ p.price=price; fetched++; await sbUpsert('etf_positions',{id:p.id,price}); }
+      if(price>0){ p.price=price; fetched++; sbPatch('etf_positions',`id=eq.${p.id}`,{price}).catch(()=>{}); }
     }catch(e){ errors.push(`${p.ticker}: ${e.message}`); }
   }
   if(errors.length) showToast('ETF: '+errors.join(' | '),'err');
