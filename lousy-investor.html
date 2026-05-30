@@ -430,6 +430,7 @@
     <input type="hidden" id="edit-id">
     <div class="form-grid">
       <div class="form-group full"><label>Name</label><input type="text" id="edit-name"></div>
+      <div class="form-group"><label>ISIN <span style="font-size:9px;color:var(--text3);">optional, DE/EU Kurs</span></label><input type="text" id="edit-isin" placeholder="z.B. DE0008430026" style="text-transform:uppercase"></div>
       <div class="form-group"><label>Ticker</label><input type="text" id="edit-ticker" style="text-transform:uppercase"></div>
       <div class="form-group"><label>Währung</label>
         <select id="edit-currency">
@@ -605,6 +606,7 @@
   <input type="hidden" id="etf-edit-id">
   <div class="form-grid">
     <div class="form-group full"><label>Name</label><input type="text" id="etf-name" placeholder="z.B. Vanguard FTSE All-World"></div>
+    <div class="form-group"><label>ISIN <span style="font-size:9px;color:var(--text3);">optional, DE/EU Kurs</span></label><input type="text" id="etf-isin" placeholder="z.B. IE00B3RBWM25" style="text-transform:uppercase"></div>
     <div class="form-group"><label>Ticker</label><input type="text" id="etf-ticker" placeholder="VWCE.DE" style="text-transform:uppercase"></div>
     <div class="form-group"><label>Währung</label><select id="etf-currency"><option value="EUR">EUR</option><option value="USD">USD → EUR</option></select></div>
     <div class="form-group"><label>Anteile</label><input type="number" id="etf-shares" placeholder="50" min="0.001" step="any"></div>
@@ -937,7 +939,9 @@ async function fetchAllPrices(){
   let updated=0, failed=[];
   for(const p of withT){
     try{
-      const [rawPrice,logoUrl]=await Promise.all([fetchQuote(p.ticker.trim()),fetchProfile(p.ticker.trim())]);
+      const isin=p.isin&&p.isin.trim();
+      const rawPricePromise = isin ? fetchBFPrice(isin).then(v=>v||fetchQuote(p.ticker.trim())) : fetchQuote(p.ticker.trim());
+      const [rawPrice,logoUrl]=await Promise.all([rawPricePromise,fetchProfile(p.ticker.trim())]);
       const priceEur=round2(p.currency==='EUR'?rawPrice:rawPrice/(eurUsd||1.10));
       const patch={price:priceEur};
       if(logoUrl) patch.logo_url=logoUrl;
@@ -1086,6 +1090,7 @@ function openEdit(id){
   const p=positions.find(x=>x.id===id); if(!p) return;
   document.getElementById('edit-id').value=id;
   document.getElementById('edit-name').value=p.name;
+  document.getElementById('edit-isin').value=p.isin||'';
   document.getElementById('edit-ticker').value=p.ticker||'';
   document.getElementById('edit-currency').value=p.currency||'USD';
   document.getElementById('edit-shares').value=p.shares;
@@ -1642,7 +1647,7 @@ async function loadEtfCash(){
 let etfPositions = [];
 
 async function loadEtf(){
-  await loadFcSettings('etf', null);
+  await loadFcSettings('etf', null); // settings loaded; update runs after render
   try{
     await loadEtfCash();
     etfPositions = await sbGet('etf_positions','order=name.asc');
@@ -1721,7 +1726,7 @@ function renderEtf(){
 }
 
 function openEtfAdd(){
-  ['etf-name','etf-ticker','etf-shares','etf-purchase','etf-price-manual'].forEach(id=>document.getElementById(id).value='');
+  ['etf-name','etf-ticker','etf-isin','etf-shares','etf-purchase','etf-price-manual'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('etf-edit-id').value='';
   document.getElementById('etf-modal-title').textContent='ETF hinzufügen';
   document.getElementById('etf-currency').value='EUR';
@@ -1735,6 +1740,7 @@ function openEtfEdit(id){
   document.getElementById('etf-currency').value=p.currency||'EUR';
   document.getElementById('etf-shares').value=p.shares;
   document.getElementById('etf-purchase').value=p.purchase_price;
+  document.getElementById('etf-isin').value=p.isin||'';
   document.getElementById('etf-price-manual').value=p.price||'';
   document.getElementById('etf-modal-title').textContent='ETF bearbeiten';
   document.getElementById('etf-modal').classList.add('open');
@@ -1742,7 +1748,7 @@ function openEtfEdit(id){
 async function saveEtf(){
   const id=document.getElementById('etf-edit-id').value;
   const priceManual=parseFloat(document.getElementById('etf-price-manual').value)||0;
-const data={name:document.getElementById('etf-name').value.trim(),ticker:document.getElementById('etf-ticker').value.trim().toUpperCase(),currency:document.getElementById('etf-currency').value,shares:parseFloat(document.getElementById('etf-shares').value)||0,purchase_price:parseFloat(document.getElementById('etf-purchase').value)||0,price:priceManual||0};
+const data={name:document.getElementById('etf-name').value.trim(),ticker:document.getElementById('etf-ticker').value.trim().toUpperCase(),isin:document.getElementById('etf-isin').value.trim().toUpperCase()||null,currency:document.getElementById('etf-currency').value,shares:parseFloat(document.getElementById('etf-shares').value)||0,purchase_price:parseFloat(document.getElementById('etf-purchase').value)||0,price:priceManual||0};
   if(!data.name||!data.shares){ showToast('Name und Anteile erforderlich','err'); return; }
   try{
     if(id) await sbPut('etf_positions',id,data); else await sbPost('etf_positions',data);
@@ -1760,7 +1766,7 @@ let cryptoPositions = [];
 let cryptoPrices = {};
 
 async function loadCrypto(){
-  await loadFcSettings('cr', null);
+  await loadFcSettings('cr', null); // settings loaded; update runs after render
   try{
     cryptoPositions = await sbGet('crypto_positions','order=name.asc');
     await fetchCryptoPrices();
@@ -1855,7 +1861,7 @@ let metalPositions = [];
 const METAL_NAMES = {gold:'Gold',silver:'Silber',platinum:'Platin',palladium:'Palladium'};
 
 async function loadMetals(){
-  await loadFcSettings('me', null);
+  await loadFcSettings('me', null); // settings loaded; update runs after render
   try{
     metalPositions = await sbGet('metal_positions','order=name.asc');
     await fetchMetalPrices();
@@ -2068,7 +2074,7 @@ let ibPositions = [];
 let ibFxRate = 1;
 
 async function loadIb(){
-  await loadFcSettings('ib', null);
+  await loadFcSettings('ib', null); // settings loaded; update runs after render
   try{
     await loadIbCash();
     if(!eurUsd||eurUsd<=0) await fetchFxRate();
@@ -2271,6 +2277,32 @@ async function loadFcSettings(prefix, updateFn){
   if(updateFn) updateFn();
 }
 
+
+
+// ── Boerse Frankfurt API (ISIN-based, DE/EU stocks & ETFs) ───────────────
+async function fetchBFPrice(isin, mic='XETR'){
+  const endpoints = [
+    `https://api.boerse-frankfurt.de/v1/data/price_information?isin=${isin}&mic=${mic}`,
+    `https://api.boerse-frankfurt.de/v2/data/price_information?isin=${isin}&mic=${mic}`,
+  ];
+  for(const url of endpoints){
+    try{
+      const r = await fetch(url, {
+        headers:{'Accept':'application/json','User-Agent':'Mozilla/5.0'}
+      });
+      if(!r.ok) continue;
+      const d = await r.json();
+      // BF API returns lastPrice or price
+      const price = parseFloat(d.lastPrice || d.price || d.lastTradedPrice || 0);
+      if(price > 0){
+        console.log(`BF ✓ ${isin} = ${price}`);
+        return price;
+      }
+    }catch(e){}
+  }
+  console.warn(`BF: no price for ISIN ${isin}`);
+  return 0;
+}
 
 // ── EU/International price fetch ─────────────────────────────────────────
 // Stooq.com: free, no key, covers XETRA (.DE), LSE (.L), TSX (.TRT/.TO)
