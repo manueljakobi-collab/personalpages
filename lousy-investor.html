@@ -2286,39 +2286,29 @@ async function loadFcSettings(prefix, updateFn){
 
 
 // ── Boerse Frankfurt API (ISIN-based, DE/EU stocks & ETFs) ───────────────
-async function fetchBFPrice(isin, mic='XETR'){
-  const bfUrl = `https://api.boerse-frankfurt.de/v1/data/price_information?isin=${isin}&mic=${mic}`;
-  const stooqUrl = `https://stooq.com/q/l/?s=${isin.toLowerCase()}&f=sd2t2ohlcv&h&e=csv`;
-
-  // Try each source with and without corsproxy
-  const attempts = [
-    {url: bfUrl, type: 'json'},
-    {url: `https://corsproxy.io/?url=${encodeURIComponent(bfUrl)}`, type: 'json'},
-    {url: stooqUrl, type: 'csv'},
-    {url: `https://corsproxy.io/?url=${encodeURIComponent(stooqUrl)}`, type: 'csv'},
-  ];
-
-  for(const {url, type} of attempts){
+async function fetchBFPrice(isin){
+  // Step 1: ISIN → Yahoo Finance Ticker via Search API
+  let symbol = null;
+  const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${isin}&quotesCount=1&newsCount=0&enableFuzzyQuery=false`;
+  for(const url of [
+    `https://corsproxy.io/?url=${encodeURIComponent(searchUrl)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(searchUrl)}`,
+  ]){
     try{
-      const r = await fetch(url, {headers:{'Accept':'application/json, text/plain'}});
+      const r = await fetch(url, {headers:{'Accept':'application/json'}});
       if(!r.ok) continue;
-      if(type === 'json'){
-        const d = await r.json();
-        const price = parseFloat(d.lastPrice || d.price || d.lastTradedPrice || 0);
-        if(price > 0){ console.log(`BF ✓ ${isin} = ${price}`); return price; }
-      } else {
-        const text = await r.text();
-        const lines = text.trim().split('\n');
-        if(lines.length >= 2){
-          const price = parseFloat(lines[1].split(',')[6]);
-          if(price > 0){ console.log(`Stooq ✓ ${isin} = ${price}`); return price; }
-        }
-      }
+      const d = await r.json();
+      const hit = d?.quotes?.find(q=>q.symbol&&(q.quoteType==='ETF'||q.quoteType==='EQUITY'||q.quoteType==='MUTUALFUND'));
+      if(hit?.symbol){ symbol = hit.symbol; break; }
     }catch(e){}
   }
-  console.warn(`No price for ISIN ${isin}`);
+  if(!symbol){ console.warn(`YF search: no ticker for ${isin}`); return 0; }
+  // Step 2: Ticker → Kurs
+  const price = await fetchEUPrice(symbol);
+  if(price>0){ console.log(`YF ✓ ${isin} → ${symbol} = ${price}`); return price; }
   return 0;
 }
+
 
 // ── EU/International price fetch ─────────────────────────────────────────
 // Stooq.com: free, no key, covers XETRA (.DE), LSE (.L), TSX (.TRT/.TO)
