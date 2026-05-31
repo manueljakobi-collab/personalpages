@@ -6,8 +6,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Dividenden-Depot</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f1117'/%3E%3C!-- Gauge arc track --%3E%3Cpath d='M6 22 A11 11 0 0 1 26 22' fill='none' stroke='%231e2333' stroke-width='3' stroke-linecap='round'/%3E%3C!-- Gauge arc fill --%3E%3Cpath d='M6 22 A11 11 0 0 1 26 22' fill='none' stroke='%23c8f064' stroke-width='3' stroke-linecap='round' stroke-dasharray='22 35'/%3E%3C!-- Needle --%3E%3Cline x1='16' y1='22' x2='21' y2='13' stroke='%23c8f064' stroke-width='1.8' stroke-linecap='round'/%3E%3C!-- Center dot --%3E%3Ccircle cx='16' cy='22' r='2' fill='%23c8f064'/%3E%3C!-- Euro sign --%3E%3Ctext x='9' y='29' font-size='6' fill='%23f5c842' font-family='sans-serif' font-weight='bold'%3E€%3C/text%3E%3C/svg%3E">
+<title>Lousy Investor</title>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
@@ -241,9 +242,10 @@
 
   <div class="top-bar">
     <div id="logo-wrap" style="display:flex;align-items:center;gap:10px;">
+      <span id="main-clown" style="font-size:40px;line-height:1;display:none;">🤡</span>
       <img id="main-logo" data-scalable="data:image/png;base64,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" src="data:image/png;base64,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" alt="Scalable Capital" style="height:42px;width:42px;border-radius:8px;object-fit:cover;">
     </div>
-    <h1 id="main-title">Dividenden<span>-Depot</span></h1>
+    <h1 id="main-title">Lousy<span> Investor</span></h1>
     <div class="sync-indicator">
       <div class="sync-dot loading" id="sync-dot"></div>
       <span id="sync-label">Verbinde…</span>
@@ -506,6 +508,13 @@
         <thead><tr><th>Depot</th><th>Prognose</th><th>Ist-Wert</th><th>Davon Cash</th></tr></thead>
         <tbody id="ov-compare-body"></tbody>
       </table>
+      <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border2);display:flex;align-items:center;gap:12px;">
+        <span style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;">Comdirect Cash</span>
+        <input type="number" id="comdirect-cash" placeholder="0" min="0" step="100"
+          style="width:130px;padding:4px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:13px;"
+          oninput="saveComdirectCash()">
+        <span style="font-size:11px;color:var(--text3)">€ (wird in der Tabelle oben angezeigt)</span>
+      </div>
     </div>
   </div>
 </div>
@@ -521,12 +530,13 @@
     <div class="kpi"><div class="kpi-label" id="etf-fc-label">Prognose 2035</div><div class="kpi-value gold" id="etf-fc-val">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="etf-fc-sub" style="font-size:9px;"></div></div>
   </div><div class="full-card">
     <div class="card">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="card-title" style="align-items:center;">
         <span>ETF-Positionen</span>
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
           <div class="fc-settings">
             <label>Bis</label><input type="number" id="etf-fc-year" value="2035" min="2025" max="2100" oninput="updateETFForecast();saveFcSettings('etf')">
             <label>Wachstum&nbsp;%</label><input type="number" id="etf-fc-growth" value="7.0" min="0" max="50" step="0.1" oninput="updateETFForecast();saveFcSettings('etf')">
+            <label>Sparrate&nbsp;€/Monat</label><input type="number" id="etf-fc-sparrate" value="0" min="0" step="50" oninput="updateETFForecast();saveFcSettings('etf')">
           </div>
           <button class="btn-primary" style="width:auto;padding:6px 14px;margin:0;font-size:12px;" onclick="openEtfAdd()">+ Position</button>
         </div>
@@ -539,21 +549,22 @@
 <!-- ═══════════════════ TAB: KRYPTO ═══════════════════ -->
 <div id="tab-krypto" class="tab-content shell" style="margin-top:-4rem;padding-top:0;">
   <div class="kpi-row">
-    <div class="kpi"><div class="kpi-label">Positionen</div><div class="kpi-value" id="cr-kpi-pos">—</div></div>
+    <div class="kpi"><div class="kpi-label">Transaktionen</div><div class="kpi-value" id="cr-kpi-pos">—</div></div>
     <div class="kpi"><div class="kpi-label">Einstandswert</div><div class="kpi-value blue" id="cr-kpi-cost">—</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Depotwert</div><div class="kpi-value blue" id="cr-kpi-depot">—</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Gewinn / Verlust</div><div class="kpi-value" id="cr-kpi-gv">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="cr-kpi-gv-pct"></div></div>
     <div class="kpi"><div class="kpi-label" id="cr-fc-label">Prognose 2035</div><div class="kpi-value gold" id="cr-fc-val">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="cr-fc-sub" style="font-size:9px;"></div></div>
-  </div><div class="full-card">
+  </div>
+  <div class="full-card">
     <div class="card">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="card-title" style="align-items:center;">
         <span>Krypto-Positionen</span>
-<div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
           <div class="fc-settings">
             <label>Bis</label><input type="number" id="cr-fc-year" value="2035" min="2025" max="2100" oninput="updateCRForecast();saveFcSettings('cr')">
             <label>Wachstum&nbsp;%</label><input type="number" id="cr-fc-growth" value="7.0" min="0" max="50" step="0.1" oninput="updateCRForecast();saveFcSettings('cr')">
           </div>
-                  <button class="btn-primary" style="width:auto;padding:6px 14px;margin:0;font-size:12px;" onclick="openCrAdd()">+ Position</button>
+          <button class="btn-primary" style="width:auto;padding:6px 14px;margin:0;font-size:12px;" onclick="openCrAdd()">+ Transaktion</button>
         </div>
       </div>
       <div id="cr-table-wrap"><div class="empty-state">Lade…</div></div>
@@ -568,12 +579,13 @@
     <div class="kpi"><div class="kpi-label">Einstandswert</div><div class="kpi-value blue" id="me-kpi-cost">—</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Depotwert</div><div class="kpi-value blue" id="me-kpi-depot">—</div><div class="kpi-denom">EUR</div></div>
     <div class="kpi"><div class="kpi-label">Gewinn / Verlust</div><div class="kpi-value" id="me-kpi-gv">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="me-kpi-gv-pct"></div></div>
+    <div class="kpi"><div class="kpi-label">Gold USD/oz</div><div class="kpi-value" id="me-kpi-gold-usd">—</div><div class="kpi-sub" id="me-kpi-gold-eur">— €/oz</div></div>
     <div class="kpi"><div class="kpi-label" id="me-fc-label">Prognose 2035</div><div class="kpi-value gold" id="me-fc-val">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="me-fc-sub" style="font-size:9px;"></div></div>
   </div><div class="full-card">
     <div class="card">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="card-title" style="align-items:center;">
         <span>Edelmetall-Positionen</span>
-<div style="display:flex;align-items:center;gap:10px;">
+<div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
           <div class="fc-settings">
             <label>Bis</label><input type="number" id="me-fc-year" value="2035" min="2025" max="2100" oninput="updateMEForecast();saveFcSettings('me')">
             <label>Wachstum&nbsp;%</label><input type="number" id="me-fc-growth" value="7.0" min="0" max="50" step="0.1" oninput="updateMEForecast();saveFcSettings('me')">
@@ -619,21 +631,43 @@
 </div></div>
 
 <!-- Krypto Modal -->
-<div class="modal-bg" id="cr-modal"><div class="modal">
-  <h3 id="cr-modal-title">Krypto hinzufügen</h3>
-  <input type="hidden" id="cr-edit-id">
-  <div class="form-grid">
-    <div class="form-group full"><label>Name</label><input type="text" id="cr-name" placeholder="z.B. Bitcoin"></div>
-    <div class="form-group"><label>Symbol (CoinGecko-ID)</label><input type="text" id="cr-symbol" placeholder="bitcoin"></div>
-    <div class="form-group"><label>Bestand</label><input type="number" id="cr-amount" placeholder="0.5" min="0" step="any"></div>
-    <div class="form-group"><label>Kaufpreis gesamt (€)</label><input type="number" id="cr-purchase" placeholder="15000" min="0" step="any"></div>
+<div class="modal-bg" id="cr-modal">
+  <div class="modal">
+    <h3 id="cr-modal-title">Transaktion hinzufügen</h3>
+    <input type="hidden" id="cr-edit-id">
+    <div class="form-grid">
+      <div class="form-group"><label>Coin</label>
+        <select id="cr-coin">
+          <option value="bitcoin">Bitcoin (BTC)</option>
+          <option value="ethereum">Ethereum (ETH)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Kaufdatum</label>
+        <input type="date" id="cr-date">
+      </div>
+      <div class="form-group"><label>Menge</label>
+        <input type="number" id="cr-amount" placeholder="0.05" min="0" step="any">
+      </div>
+      <div class="form-group"><label>Einstandskurs (€/Coin)</label>
+        <input type="number" id="cr-price-eur" placeholder="82000" min="0" step="any" oninput="updateCrTotal()">
+      </div>
+      <div class="form-group full"><label>Gesamtkosten (€) <span id="cr-total-display" style="color:var(--teal);margin-left:8px;"></span></label>
+        <input type="number" id="cr-total-eur" placeholder="wird berechnet" min="0" step="any" oninput="updateCrFromTotal()">
+      </div>
+      <div class="form-group"><label>Handelsplatz</label>
+        <input type="text" id="cr-exchange" placeholder="z.B. Coinbase, Bitpanda">
+      </div>
+      <div class="form-group"><label>Notiz</label>
+        <input type="text" id="cr-notes" placeholder="optional">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn-primary" onclick="saveCrypto()">Speichern</button>
+      <button class="btn-secondary" onclick="document.getElementById('cr-modal').classList.remove('open')">Abbrechen</button>
+    </div>
   </div>
-  <p class="hint">Symbol = CoinGecko-ID: bitcoin, ethereum, solana, cardano…</p>
-  <div class="modal-actions">
-    <button class="btn-sec" onclick="document.getElementById('cr-modal').classList.remove('open')">Abbrechen</button>
-    <button class="btn-primary" style="margin:0" onclick="saveCrypto()">Speichern</button>
-  </div>
-</div></div>
+</div>
+
 
 <!-- Edelmetall Modal -->
 <div class="modal-bg" id="me-modal"><div class="modal">
@@ -642,7 +676,9 @@
   <div class="form-grid">
     <div class="form-group full"><label>Bezeichnung</label><input type="text" id="me-name" placeholder="z.B. Krügerrand 1 oz"></div>
     <div class="form-group"><label>Metall</label><select id="me-type"><option value="gold">Gold</option><option value="silver">Silber</option><option value="platinum">Platin</option><option value="palladium">Palladium</option></select></div>
-    <div class="form-group"><label>Stück</label><input type="number" id="me-pieces" placeholder="5" min="1" step="1"></div>
+    <div class="form-group"><label>Stück / Menge</label><input type="number" id="me-pieces" placeholder="5" min="0" step="any"></div>
+    <div class="form-group"><label>Einheit</label><select id="me-unit"><option value="oz">Unzen (oz)</option><option value="gr">Gramm (g)</option></select></div>
+    <div class="form-group"><label>Gewicht / Stück <span style="font-size:9px;color:var(--text3)">z.B. 0.25 für ¼ oz</span></label><input type="number" id="me-weight" value="1" min="0.001" step="any"></div>
     <div class="form-group"><label>Kaufpreis / Stück (€)</label><input type="number" id="me-purchase" placeholder="1800" min="0" step="any"></div>
   </div>
   <div class="modal-actions">
@@ -663,9 +699,9 @@
     <div class="kpi"><div class="kpi-label" id="ib-fc-label">Prognose 2035</div><div class="kpi-value gold" id="ib-fc-val">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="ib-fc-sub" style="font-size:9px;"></div></div>
   </div><div class="full-card">
     <div class="card">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="card-title" style="align-items:center;">
         <span>IB Positionen</span>
-<div style="display:flex;align-items:center;gap:10px;">
+<div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
           <div class="fc-settings">
             <label>Bis</label><input type="number" id="ib-fc-year" value="2035" min="2025" max="2100" oninput="updateIBForecast();saveFcSettings('ib')">
             <label>Wachstum&nbsp;%</label><input type="number" id="ib-fc-growth" value="7.0" min="0" max="50" step="0.1" oninput="updateIBForecast();saveFcSettings('ib')">
@@ -727,6 +763,15 @@
 
 
 <script>
+// Set clown favicon
+(function(){
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">&#x1F921;</text></svg>';
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+  document.head.appendChild(link);
+})();
 const SB_URL  = 'https://mpuywzmwlcuywyakrkpn.supabase.co';
 const SB_KEY  = 'sb_publishable_bptsJcXInXzqoVHXkiIZ3g_YgjmpRxf';
 const FH_KEY  = 'd8a3cr1r01qhv1v01qa0d8a3cr1r01qhv1v01qag';
@@ -1592,7 +1637,7 @@ const IB_LOGO = 'data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST
 const KRYPTO_LOGO = 'data:image/png;base64,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';
 const TR_LOGO = 'data:image/png;base64,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';
 const TAB_TITLES = {
-  uebersicht: 'Vermögens<span>-Übersicht</span>',
+  uebersicht: 'Lousy<span> Investor</span>',
   dividenden:  'Dividenden<span>-Depot</span>',
   etf:         'ETF<span>-Depot</span>',
   krypto:      'Krypto<span>-Depot</span>',
@@ -1607,6 +1652,9 @@ function showTab(name){
   document.getElementById('main-title').innerHTML = TAB_TITLES[name] || name;
   const logoWrap = document.getElementById('logo-wrap');
   const logoImg  = document.getElementById('main-logo');
+  const clown = document.getElementById('main-clown');
+  if(clown) clown.style.display='none';
+  logoImg.style.display='block';
   if(name==='dividenden'){
     logoImg.src = logoImg.dataset.scalable;
     logoImg.style.borderRadius = '8px';
@@ -1626,6 +1674,11 @@ function showTab(name){
   } else if(name==='ib'){
     logoImg.src = IB_LOGO;
     logoImg.style.borderRadius = '8px';
+    logoWrap.style.display = 'flex';
+  } else if(name==='uebersicht'){
+    const clown = document.getElementById('main-clown');
+    logoImg.style.display = 'none';
+    if(clown){ clown.style.display='inline'; }
     logoWrap.style.display = 'flex';
   } else {
     logoWrap.style.display = 'none';
@@ -1762,100 +1815,211 @@ async function deleteEtf(id){
 }
 
 // ══════════════════════ KRYPTO ══════════════════════════════════════════
-let cryptoPositions = [];
+let cryptoTransactions = [];
 let cryptoPrices = {};
 
 async function loadCrypto(){
-  await loadFcSettings('cr', null); // settings loaded; update runs after render
+  await loadFcSettings('cr', null);
   try{
-    cryptoPositions = await sbGet('crypto_positions','order=name.asc');
+    cryptoTransactions = await sbGet('crypto_transactions','order=purchase_date.asc');
     await fetchCryptoPrices();
     renderCrypto();
   }catch(e){ document.getElementById('cr-table-wrap').innerHTML=`<div class="empty-state" style="color:var(--red)">${e.message}</div>`; }
 }
 
 async function fetchCryptoPrices(){
-  const symbols = cryptoPositions.map(p=>p.symbol).filter(Boolean).join(',');
-  if(!symbols) return;
+  const coins = [...new Set(cryptoTransactions.map(t=>t.coin))];
+  if(!coins.length) return;
   try{
-    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbols}&vs_currencies=eur`);
+    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coins.join(',')}&vs_currencies=eur`);
     const d = await r.json();
-    cryptoPositions.forEach(p=>{
-      const price = d[p.symbol]?.eur||0;
-      if(price>0){ p.price=price; sbUpsert('crypto_positions',{id:p.id,price}).catch(()=>{}); }
-    });
-  }catch(e){}
+    cryptoPrices = d; // e.g. {bitcoin:{eur:82000}, ethereum:{eur:2400}}
+  }catch(e){ console.warn('CoinGecko error:', e.message); }
 }
 
 function renderCrypto(){
   const wrap = document.getElementById('cr-table-wrap');
-  const totalCost   = cryptoPositions.reduce((s,p)=>s+Number(p.purchase_price),0);
-  const totalDepot  = cryptoPositions.reduce((s,p)=>s+Number(p.amount)*(Number(p.price)||0),0);
-  const gv = totalDepot-totalCost;
-  const gvPct = totalCost>0?(gv/totalCost*100):0;
-  document.getElementById('cr-kpi-pos').textContent   = cryptoPositions.length;
-  document.getElementById('cr-kpi-cost').textContent  = fmtEurMod(totalCost);
+  const COINS = {bitcoin:'Bitcoin (BTC)', ethereum:'Ethereum (ETH)'};
+  const COIN_SYM = {bitcoin:'BTC', ethereum:'ETH'};
+  const coins = [...new Set(cryptoTransactions.map(t=>t.coin))];
+  let totalCost=0, totalDepot=0;
+
+  // ── Positions summary table ─────────────────────────────────────────
+  let posRows = '';
+  const coinData = {};
+  for(const coin of coins){
+    const txs      = cryptoTransactions.filter(t=>t.coin===coin);
+    const spotEur  = cryptoPrices?.[coin]?.eur || 0;
+    const totalAmt = txs.reduce((s,t)=>s+Number(t.amount),0);
+    const coinCost = txs.reduce((s,t)=>s+Number(t.amount)*Number(t.price_eur),0);
+    const coinVal  = totalAmt * spotEur;
+    const coinGV   = coinVal - coinCost;
+    const coinGVP  = coinCost>0?(coinGV/coinCost*100):0;
+    const avgEntry = totalAmt>0?(coinCost/totalAmt):0;
+    totalCost += coinCost; totalDepot += coinVal;
+    coinData[coin] = {txs, spotEur, totalAmt, coinCost, coinVal, coinGV, coinGVP, avgEntry};
+
+    posRows += `<tr>
+      <td style="font-weight:600">${COINS[coin]||coin}</td>
+      <td class="num">${totalAmt.toLocaleString('de-DE',{maximumFractionDigits:8})} ${COIN_SYM[coin]||''}</td>
+      <td class="num">${fmtEurMod(avgEntry)} €</td>
+      <td class="num">${spotEur?fmtEurMod(spotEur)+' €':'—'}</td>
+      <td class="num">${fmtEurMod(coinCost)} €</td>
+      <td class="num">${spotEur?fmtEurMod(coinVal)+' €':'—'}</td>
+      <td class="num" style="color:${gvColor(coinGV)}">${coinGV>=0?'+':''}${fmtEurMod(coinGV)} €</td>
+      <td class="num" style="color:${gvColor(coinGVP)}">${fmtPct(coinGVP)}</td>
+      <td><button class="action-btn" style="font-size:10px;padding:2px 8px;" onclick="toggleCrTx('${coin}')">Transaktionen ▼</button></td>
+    </tr>`;
+  }
+
+  // ── Transaction sections (collapsed by default) ─────────────────────
+  let txSections = '';
+  for(const coin of coins){
+    const {txs, spotEur} = coinData[coin];
+    txSections += `<div id="cr-tx-${coin}" style="display:none;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px;">${COINS[coin]||coin} — Transaktionen</div>
+      <table class="mod-table">
+        <thead><tr>
+          <th>Datum</th>
+          <th class="num">Menge</th>
+          <th class="num">Einstand €/Coin</th>
+          <th class="num">Einsatz €</th>
+          <th class="num">Akt. Wert €</th>
+          <th class="num">G/V €</th>
+          <th class="num">G/V %</th>
+          <th>Handelsplatz</th>
+          <th>Notiz</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${txs.map(t=>{
+          const amt=Number(t.amount), ep=Number(t.price_eur);
+          const cost=amt*ep, val=amt*spotEur, gv=val-cost, gvp=cost>0?(gv/cost*100):0;
+          return `<tr>
+            <td style="color:var(--text3);font-size:12px;">${t.purchase_date||'—'}</td>
+            <td class="num">${amt.toLocaleString('de-DE',{maximumFractionDigits:8})}</td>
+            <td class="num">${fmtEurMod(ep)}</td>
+            <td class="num">${fmtEurMod(cost)}</td>
+            <td class="num">${spotEur?fmtEurMod(val):'—'}</td>
+            <td class="num" style="color:${gvColor(gv)}">${spotEur?(gv>=0?'+':'')+fmtEurMod(gv):'—'}</td>
+            <td class="num" style="color:${gvColor(gvp)}">${spotEur?fmtPct(gvp):'—'}</td>
+            <td style="font-size:11px;color:var(--text3)">${t.exchange||'—'}</td>
+            <td style="font-size:11px;color:var(--text3)">${t.notes||''}</td>
+            <td style="white-space:nowrap">
+              <button class="action-btn" onclick="openCrEdit('${t.id}')">✎</button>
+              <button class="action-btn del" onclick="deleteCrypto('${t.id}')" style="margin-left:4px">✕</button>
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  if(!cryptoTransactions.length){
+    wrap.innerHTML='<div class="empty-state">Noch keine Transaktionen</div>';
+  } else {
+    wrap.innerHTML = `
+      <table class="mod-table" style="margin-bottom:0;">
+        <thead><tr>
+          <th>Coin</th>
+          <th class="num">Bestand</th>
+          <th class="num">Ø Einstieg €</th>
+          <th class="num">Spot €</th>
+          <th class="num">Einstandswert €</th>
+          <th class="num">Akt. Wert €</th>
+          <th class="num">G/V €</th>
+          <th class="num">G/V %</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${posRows}</tbody>
+      </table>
+      ${txSections}`;
+  }
+
+  // KPIs
+  const gv=totalDepot-totalCost, gvp=totalCost>0?(gv/totalCost*100):0;
+  document.getElementById('cr-kpi-pos').textContent = cryptoTransactions.length;
+  document.getElementById('cr-kpi-cost').textContent = fmtEurMod(totalCost);
   document.getElementById('cr-kpi-depot').textContent = fmtEurMod(totalDepot);
-  const gvEl = document.getElementById('cr-kpi-gv');
-  gvEl.textContent = fmtEurMod(gv); gvEl.style.color = gvColor(gv);
-  document.getElementById('cr-kpi-gv-pct').textContent = fmtPct(gvPct);
-  document.getElementById('cr-kpi-gv-pct').style.color = gvColor(gv);
-  _ovCry = cryptoPositions.reduce((s,p)=>s+Number(p.amount)*(Number(p.price)||0),0);
-  updateCRForecast();
-  updateOverviewForecast();
-  if(!cryptoPositions.length){ wrap.innerHTML='<div class="empty-state">Noch keine Krypto-Positionen</div>'; return; }
-  wrap.innerHTML = `<table class="mod-table">
-    <thead><tr><th>Name</th><th>Symbol</th><th class="num">Bestand</th><th class="num">Kauf gesamt €</th><th class="num">Kurs €</th><th class="num">Akt. Wert €</th><th class="num">G/V €</th><th class="num">G/V %</th><th></th></tr></thead>
-    <tbody>${cryptoPositions.map(p=>{
-      const depot = Number(p.amount)*(Number(p.price)||0);
-      const cost  = Number(p.purchase_price);
-      const gv    = depot-cost;
-      const gvp   = cost>0?(gv/cost*100):0;
-      return `<tr>
-        <td style="font-weight:500">${p.name}</td>
-        <td style="color:var(--text3);font-family:'DM Mono',monospace;font-size:11px;">${(p.symbol||'').toUpperCase()}</td>
-        <td class="num">${Number(p.amount).toLocaleString('de-DE',{maximumFractionDigits:8})}</td>
-        <td class="num">${fmtEurMod(cost)}</td>
-        <td class="num">${p.price?Number(p.price).toLocaleString('de-DE',{maximumFractionDigits:2}):'—'}</td>
-        <td class="num">${fmtEurMod(depot)}</td>
-        <td class="num" style="color:${gvColor(gv)}">${gv>=0?'+':''}${fmtEurMod(gv)}</td>
-        <td class="num" style="color:${gvColor(gvp)}">${fmtPct(gvp)}</td>
-        <td style="white-space:nowrap">
-          <button class="action-btn" onclick="openCrEdit('${p.id}')">✎</button>
-          <button class="action-btn del" onclick="deleteCrypto('${p.id}')" style="margin-left:4px">✕</button>
-        </td></tr>`;
-    }).join('')}</tbody></table>`;
+  const gvEl=document.getElementById('cr-kpi-gv');
+  gvEl.textContent=fmtEurMod(gv); gvEl.style.color=gvColor(gv);
+  document.getElementById('cr-kpi-gv-pct').textContent=fmtPct(gvp);
+  document.getElementById('cr-kpi-gv-pct').style.color=gvColor(gv);
+  _ovCry=totalDepot; _fcBase.cr=totalDepot;
+  updateCRForecast(); updateOverviewForecast();
+}
+
+
+
+function toggleCrTx(coin){
+  const el = document.getElementById('cr-tx-'+coin);
+  const arrow = document.getElementById('cr-tx-arrow-'+coin);
+  if(!el) return;
+  const open = el.style.display === 'none';
+  el.style.display = open ? 'block' : 'none';
+  if(arrow) arrow.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function updateCrTotal(){
+  const amt = parseFloat(document.getElementById('cr-amount').value)||0;
+  const price = parseFloat(document.getElementById('cr-price-eur').value)||0;
+  const total = amt * price;
+  document.getElementById('cr-total-display').textContent = total>0 ? '= '+fmtEurMod(total)+' €' : '';
+  if(total>0) document.getElementById('cr-total-eur').value = total.toFixed(2);
+}
+function updateCrFromTotal(){
+  const amt = parseFloat(document.getElementById('cr-amount').value)||0;
+  const total = parseFloat(document.getElementById('cr-total-eur').value)||0;
+  if(amt>0 && total>0){
+    const price = total/amt;
+    document.getElementById('cr-price-eur').value = price.toFixed(2);
+    document.getElementById('cr-total-display').textContent = '= '+fmtEurMod(total)+' €';
+  }
 }
 
 function openCrAdd(){
-  ['cr-name','cr-symbol','cr-amount','cr-purchase'].forEach(id=>document.getElementById(id).value='');
+  ['cr-amount','cr-price-eur','cr-total-eur','cr-notes','cr-exchange'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('cr-edit-id').value='';
-  document.getElementById('cr-modal-title').textContent='Krypto hinzufügen';
+  document.getElementById('cr-coin').value='bitcoin';
+  document.getElementById('cr-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('cr-total-display').textContent='';
+  document.getElementById('cr-modal-title').textContent='Transaktion hinzufügen';
   document.getElementById('cr-modal').classList.add('open');
 }
 function openCrEdit(id){
-  const p=cryptoPositions.find(x=>x.id===id); if(!p) return;
-  document.getElementById('cr-edit-id').value=p.id;
-  document.getElementById('cr-name').value=p.name;
-  document.getElementById('cr-symbol').value=p.symbol||'';
-  document.getElementById('cr-amount').value=p.amount;
-  document.getElementById('cr-purchase').value=p.purchase_price;
-  document.getElementById('cr-modal-title').textContent='Krypto bearbeiten';
+  const t=cryptoTransactions.find(x=>x.id===id); if(!t) return;
+  document.getElementById('cr-edit-id').value=t.id;
+  document.getElementById('cr-coin').value=t.coin||'bitcoin';
+  document.getElementById('cr-date').value=t.purchase_date||'';
+  document.getElementById('cr-amount').value=t.amount;
+  document.getElementById('cr-price-eur').value=t.price_eur;
+  document.getElementById('cr-total-eur').value='';
+  document.getElementById('cr-exchange').value=t.exchange||'';
+  document.getElementById('cr-notes').value=t.notes||'';
+  updateCrTotal();
+  document.getElementById('cr-modal-title').textContent='Transaktion bearbeiten';
   document.getElementById('cr-modal').classList.add('open');
 }
 async function saveCrypto(){
   const id=document.getElementById('cr-edit-id').value;
-  const data={name:document.getElementById('cr-name').value.trim(),symbol:document.getElementById('cr-symbol').value.trim().toLowerCase(),amount:parseFloat(document.getElementById('cr-amount').value)||0,purchase_price:parseFloat(document.getElementById('cr-purchase').value)||0,price:0};
-  if(!data.name||!data.amount){ showToast('Name und Bestand erforderlich','err'); return; }
+  const data={
+    coin:document.getElementById('cr-coin').value,
+    purchase_date:document.getElementById('cr-date').value,
+    amount:parseFloat(document.getElementById('cr-amount').value)||0,
+    price_eur:parseFloat(document.getElementById('cr-price-eur').value)||0,
+    exchange:document.getElementById('cr-exchange').value.trim()||null,
+    notes:document.getElementById('cr-notes').value.trim()||null
+  };
+  if(!data.amount||!data.price_eur||!data.purchase_date){ showToast('Datum, Menge und Kurs erforderlich','err'); return; }
   try{
-    if(id) await sbPut('crypto_positions',id,data); else await sbPost('crypto_positions',data);
+    if(id) await sbPut('crypto_transactions',id,data); else await sbPost('crypto_transactions',data);
     document.getElementById('cr-modal').classList.remove('open');
     showToast('Gespeichert','ok'); loadCrypto();
   }catch(e){ showToast(e.message,'err'); }
 }
 async function deleteCrypto(id){
-  if(!confirm('Position löschen?')) return;
-  await sbDelete('crypto_positions',id); loadCrypto();
+  if(!confirm('Transaktion löschen?')) return;
+  await sbDelete('crypto_transactions',`id=eq.${id}`);
+  loadCrypto();
 }
 
 // ══════════════════════ EDELMETALLE ══════════════════════════════════════
@@ -1872,16 +2036,37 @@ async function loadMetals(){
 }
 
 async function fetchMetalPrices(){
-  // Use Frankfurter/ECB for XAU/XAG via Alpha Vantage CURRENCY_EXCHANGE_RATE
-  const metals = {gold:'XAU',silver:'XAG',platinum:'XPT',palladium:'XPD'};
+  const OZ_TO_GR = 31.1035;
+  // gold-api.com: free, no key, real spot prices (USD/oz)
+  const SYMBOLS = {gold:'XAU', silver:'XAG', platinum:'XPT', palladium:'XPD'};
+  if(!eurUsd) await fetchFxRate();
+  const usdToEur = eurUsd ? 1/eurUsd : 1;
+
   for(const p of metalPositions){
-    const sym = metals[p.metal_type];
+    const sym = SYMBOLS[p.metal_type];
     if(!sym) continue;
     try{
-      const r = await fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${sym}&to_currency=EUR&apikey=${AV_KEY}`);
+      const r = await fetch(`https://api.gold-api.com/price/${sym}`);
+      if(!r.ok) continue;
       const d = await r.json();
-      const rate = parseFloat(d['Realtime Currency Exchange Rate']?.['5. Exchange Rate'])||0;
-      if(rate>0){ p.current_price_per_piece=rate; sbUpsert('metal_positions',{id:p.id,current_price_per_piece:rate}).catch(()=>{}); }
+      const priceUsdPerOz = parseFloat(d.price)||0;
+      if(!priceUsdPerOz) continue;
+      const priceEurPerOz = priceUsdPerOz * usdToEur;
+      // Show gold KPI
+      if(p.metal_type === 'gold'){
+        const usdEl = document.getElementById('me-kpi-gold-usd');
+        const eurEl = document.getElementById('me-kpi-gold-eur');
+        if(usdEl) usdEl.textContent = fmtEurMod(priceUsdPerOz) + ' $';
+        if(eurEl) eurEl.textContent = fmtEurMod(priceEurPerOz) + ' €/oz';
+      }
+      // Price per piece = spot price × weight per piece
+      const unit = p.unit || 'oz';
+      const wpp  = parseFloat(p.weight_per_piece)||1;
+      const priceEurPerUnit = unit === 'gr'
+        ? (priceEurPerOz / OZ_TO_GR) * wpp
+        : priceEurPerOz * wpp;
+      p.current_price_per_piece = priceEurPerUnit;
+      sbPatch('metal_positions',`id=eq.${p.id}`,{current_price_per_piece:priceEurPerUnit}).catch(()=>{});
     }catch(e){}
   }
 }
@@ -1904,7 +2089,7 @@ function renderMetals(){
   updateOverviewForecast();
   if(!metalPositions.length){ wrap.innerHTML='<div class="empty-state">Noch keine Edelmetall-Positionen</div>'; return; }
   wrap.innerHTML = `<table class="mod-table">
-    <thead><tr><th>Bezeichnung</th><th>Metall</th><th class="num">Stück</th><th class="num">Kaufpreis/Stück €</th><th class="num">Akt. Preis/Stück €</th><th class="num">Kaufwert €</th><th class="num">Akt. Wert €</th><th class="num">G/V €</th><th class="num">G/V %</th><th></th></tr></thead>
+    <thead><tr><th>Bezeichnung</th><th>Metall</th><th class="num">Menge</th><th class="num">Kaufpreis/Stück €</th><th class="num">Akt. Preis/Stück €</th><th class="num">Kaufwert €</th><th class="num">Akt. Wert €</th><th class="num">G/V €</th><th class="num">G/V %</th><th></th></tr></thead>
     <tbody>${metalPositions.map(p=>{
       const curPrice = Number(p.current_price_per_piece)||Number(p.purchase_price_per_piece);
       const cost  = Number(p.pieces)*Number(p.purchase_price_per_piece);
@@ -1914,9 +2099,9 @@ function renderMetals(){
       return `<tr>
         <td style="font-weight:500">${p.name}</td>
         <td style="color:var(--gold);font-size:12px;">${METAL_NAMES[p.metal_type]||p.metal_type}</td>
-        <td class="num">${Number(p.pieces).toLocaleString('de-DE')}</td>
-        <td class="num">${fmtEurMod(Number(p.purchase_price_per_piece))}</td>
-        <td class="num">${fmtEurMod(curPrice)}</td>
+        <td class="num">${Number(p.pieces).toLocaleString('de-DE',{maximumFractionDigits:0})} × ${Number(p.weight_per_piece||1).toLocaleString('de-DE',{maximumFractionDigits:4})} ${p.unit||'oz'}</td>
+        <td class="num">${fmtEurMod(Number(p.purchase_price_per_piece))} €/${p.unit||'oz'}</td>
+        <td class="num">${fmtEurMod(curPrice)} €/${p.unit||'oz'}</td>
         <td class="num">${fmtEurMod(cost)}</td>
         <td class="num">${fmtEurMod(depot)}</td>
         <td class="num" style="color:${gvColor(gv)}">${gv>=0?'+':''}${fmtEurMod(gv)}</td>
@@ -1930,6 +2115,8 @@ function renderMetals(){
 
 function openMeAdd(){
   ['me-name','me-pieces','me-purchase'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('me-unit').value='oz';
+  document.getElementById('me-weight').value='1';
   document.getElementById('me-edit-id').value='';
   document.getElementById('me-type').value='gold';
   document.getElementById('me-modal-title').textContent='Edelmetall hinzufügen';
@@ -1942,12 +2129,22 @@ function openMeEdit(id){
   document.getElementById('me-type').value=p.metal_type;
   document.getElementById('me-pieces').value=p.pieces;
   document.getElementById('me-purchase').value=p.purchase_price_per_piece;
+  document.getElementById('me-unit').value=p.unit||'oz';
+  document.getElementById('me-weight').value=p.weight_per_piece||1;
   document.getElementById('me-modal-title').textContent='Edelmetall bearbeiten';
   document.getElementById('me-modal').classList.add('open');
 }
 async function saveMetal(){
   const id=document.getElementById('me-edit-id').value;
-  const data={name:document.getElementById('me-name').value.trim(),metal_type:document.getElementById('me-type').value,pieces:parseInt(document.getElementById('me-pieces').value)||1,purchase_price_per_piece:parseFloat(document.getElementById('me-purchase').value)||0,current_price_per_piece:0};
+  const data={
+    name:document.getElementById('me-name').value.trim(),
+    metal_type:document.getElementById('me-type').value,
+    unit:document.getElementById('me-unit').value||'oz',
+    weight_per_piece:parseFloat(document.getElementById('me-weight').value)||1,
+    pieces:parseFloat(document.getElementById('me-pieces').value)||1,
+    purchase_price_per_piece:parseFloat(document.getElementById('me-purchase').value)||0,
+    current_price_per_piece:0
+  };
   if(!data.name){ showToast('Bezeichnung erforderlich','err'); return; }
   try{
     if(id) await sbPut('metal_positions',id,data); else await sbPost('metal_positions',data);
@@ -1962,6 +2159,7 @@ async function deleteMetal(id){
 
 // ══════════════════════ ÜBERSICHT ══════════════════════════════════════
 async function loadOverview(){
+  await loadComdirectCash();
   const now = new Date().getFullYear();
 
   // Use in-memory arrays (already loaded when depots were opened)
@@ -1969,7 +2167,7 @@ async function loadOverview(){
   const [div, etf, cry, met, ib, settRows] = await Promise.all([
     positions.length       ? Promise.resolve(positions)       : sbGet('depot_positions','select=shares,price,purchase_price').catch(()=>[]),
     etfPositions.length    ? Promise.resolve(etfPositions)    : sbGet('etf_positions','select=shares,price,purchase_price').catch(()=>[]),
-    cryptoPositions.length ? Promise.resolve(cryptoPositions) : sbGet('crypto_positions','select=amount,price,purchase_price').catch(()=>[]),
+    cryptoTransactions.length > 0 ? Promise.resolve(cryptoTransactions) : sbGet('crypto_transactions','select=coin,amount,price_eur').catch(()=>[]),
     metalPositions.length  ? Promise.resolve(metalPositions)  : sbGet('metal_positions','select=pieces,current_price_per_piece,purchase_price_per_piece').catch(()=>[]),
     ibPositions.length     ? Promise.resolve(ibPositions)     : sbGet('ib_positions','select=shares,price,purchase_price').catch(()=>[]),
     sbGet('depot_settings','key=in.(cash,etf_cash,ib_cash)&select=key,value').catch(()=>[]),
@@ -1982,7 +2180,7 @@ async function loadOverview(){
 
   const divVal = div.reduce((s,p)=>s+Number(p.shares)*Number(p.price||0),0) + divCash;
   const etfVal = etf.reduce((s,p)=>s+Number(p.shares)*(p.price>0?Number(p.price):Number(p.purchase_price)),0) + etfCash;
-  const cryVal = cry.reduce((s,p)=>s+Number(p.amount)*(Number(p.price)||0),0);
+  const cryVal = Object.keys(cryptoPrices||{}).length>0 ? (() => { const coins=[...new Set(cryptoTransactions.map(t=>t.coin))]; return coins.reduce((s,c)=>{ const amt=cryptoTransactions.filter(t=>t.coin===c).reduce((a,t)=>a+Number(t.amount),0); return s+amt*(cryptoPrices[c]?.eur||0); },0); })() : cry.reduce((s,p)=>s+Number(p.amount)*(Number(p.price_eur)||0),0);
   const metVal = met.reduce((s,p)=>s+Number(p.pieces)*(Number(p.current_price_per_piece)||Number(p.purchase_price_per_piece)),0);
   const ibVal  = ib.reduce((s,p)=>s+Number(p.shares)*(p.price>0?Number(p.price):0),0) + ibCash;
   const total  = divVal+etfVal+cryVal+metVal+ibVal;
@@ -2258,17 +2456,32 @@ async function saveDivFcSettings(){
   updateOverviewForecast();
 }
 
+
+async function saveComdirectCash(){
+  const val = parseFloat(document.getElementById('comdirect-cash')?.value)||0;
+  sbUpsert('depot_settings',{key:'comdirect_cash', value:String(val)}).catch(()=>{});
+  updateOverviewForecast();
+}
+async function loadComdirectCash(){
+  try{
+    const rows = await sbGet('depot_settings','key=eq.comdirect_cash&select=value');
+    if(rows.length){ document.getElementById('comdirect-cash').value = rows[0].value; }
+  }catch(e){}
+}
+
 async function saveFcSettings(prefix){
   const year   = document.getElementById(`${prefix}-fc-year`)?.value;
   const growth = document.getElementById(`${prefix}-fc-growth`)?.value;
   if(year)   sbUpsert('depot_settings',{key:`fc_${prefix}_year`,  value:String(year)}).catch(()=>{});
   if(growth) sbUpsert('depot_settings',{key:`fc_${prefix}_growth`,value:String(growth)}).catch(()=>{});
+  const sparEl = document.getElementById(`${prefix}-fc-sparrate`);
+  if(sparEl?.value) sbUpsert('depot_settings',{key:`fc_${prefix}_sparrate`,value:String(sparEl.value)}).catch(()=>{});
   updateOverviewForecast(); // instant sync update
 }
 
 async function loadFcSettings(prefix, updateFn){
   try{
-    const rows = await sbGet('depot_settings', `key=in.(fc_${prefix}_year,fc_${prefix}_growth)&select=key,value`);
+    const rows = await sbGet('depot_settings', `key=in.(fc_${prefix}_year,fc_${prefix}_growth,fc_${prefix}_sparrate)&select=key,value`);
     rows.forEach(r=>{
       if(r.key===`fc_${prefix}_year`){
         const el = document.getElementById(`${prefix}-fc-year`);
@@ -2276,6 +2489,10 @@ async function loadFcSettings(prefix, updateFn){
       }
       if(r.key===`fc_${prefix}_growth`){
         const el = document.getElementById(`${prefix}-fc-growth`);
+        if(el) el.value = r.value;
+      }
+      if(r.key===`fc_${prefix}_sparrate`){
+        const el = document.getElementById(`${prefix}-fc-sparrate`);
         if(el) el.value = r.value;
       }
     });
@@ -2412,8 +2629,15 @@ function updateOverviewForecast(){
     {label:'Edelmetalle',      ist:_ovMet, fc:_fcResult.me||simpleFc(_fcBase.me||_ovMet,  dv('me-fc-growth',7),  dv('me-fc-year',2035)),    year:dv('me-fc-year',2035),    color:'#a78bfa', cash:0},
     {label:'IB Depot',         ist:_ovIb,  fc:_fcResult.ib||simpleFc(_fcBase.ib||_ovIb,   dv('ib-fc-growth',7),  dv('ib-fc-year',2035)),    year:dv('ib-fc-year',2035),    color:'#fb923c', cash:ibCashValue||0},
   ];
-  const total   = depots.reduce((s,d)=>s+d.ist,0);
-  const fcTotal = depots.reduce((s,d)=>s+d.fc,0);
+  const cmdCash = parseFloat(document.getElementById('comdirect-cash')?.value)||0;
+  const total   = depots.reduce((s,d)=>s+d.ist,0) + cmdCash;
+  const fcTotal = depots.reduce((s,d)=>s+d.fc,0) + cmdCash;
+  const cmdCashRow = cmdCash>0 ? `<tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;margin-right:8px;"></span>Comdirect Cash</td>
+      <td class="fc-num">${fmtEurMod(cmdCash)} €<span class="ov-year"></span></td>
+      <td class="num">${fmtEurMod(cmdCash)} €</td>
+      <td class="num" style="color:var(--text3)">${fmtEurMod(cmdCash)} €</td>
+    </tr>` : '';
   tbody.innerHTML = depots.map(d=>`
     <tr>
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d.color};margin-right:8px;"></span>${d.label}</td>
@@ -2421,11 +2645,12 @@ function updateOverviewForecast(){
       <td class="num">${fmtEurMod(d.ist)} €</td>
       <td class="num" style="color:var(--text3)">${d.cash>0?fmtEurMod(d.cash)+' €':'—'}</td>
     </tr>`).join('') +
+    cmdCashRow +
     `<tr class="sum-row">
       <td>Gesamt</td>
       <td class="fc-num">${fmtEurMod(fcTotal)} €<span class="ov-year"></span></td>
       <td class="num">${fmtEurMod(total)} €</td>
-      <td class="num" style="color:var(--text3)">${fmtEurMod(depots.reduce((s,d)=>s+d.cash,0))} €</td>
+      <td class="num" style="color:var(--text3)">${fmtEurMod(depots.reduce((s,d)=>s+d.cash,0)+cmdCash)} €</td>
     </tr>`;
 }
 
@@ -2455,13 +2680,44 @@ function renderSFC(prefix, currentVal, label){
 
 // ETF Forecast – use price in EUR only (no USD fallback)
 function updateETFForecast(){
-  const val = etfPositions.reduce((s,p)=>s+(p.price>0?Number(p.shares)*Number(p.price):Number(p.shares)*Number(p.purchase_price)),0);
-  renderSFC('etf', val, 'ETF-Depotwert');
+  const val      = etfPositions.reduce((s,p)=>s+(p.price>0?Number(p.shares)*Number(p.price):Number(p.shares)*Number(p.purchase_price)),0);
+  const growth   = parseFloat(document.getElementById('etf-fc-growth')?.value)||7;
+  const year     = parseInt(document.getElementById('etf-fc-year')?.value)||2035;
+  const sparrate = parseFloat(document.getElementById('etf-fc-sparrate')?.value)||0;
+  const now      = new Date().getFullYear();
+  const n        = Math.max(0, year - now);           // years
+  const m        = n * 12;                             // months
+  const g        = growth / 100;                       // annual rate
+  const r_m      = Math.pow(1 + g, 1/12) - 1;         // monthly rate
+
+  // Future value: current depot + annuity from monthly contributions
+  const fvDepot  = val * Math.pow(1 + g, n);
+  const fvSpar   = m > 0 && r_m > 0
+    ? sparrate * (Math.pow(1 + r_m, m) - 1) / r_m
+    : sparrate * m;
+  const fcVal    = fvDepot + fvSpar;
+
+  _fcResult.etf  = fcVal;
+  _fcBase.etf    = val;
+
+  // Update KPI tile directly
+  const valEl = document.getElementById('etf-fc-val');
+  const lblEl = document.getElementById('etf-fc-label');
+  const subEl = document.getElementById('etf-fc-sub');
+  if(valEl) valEl.textContent = fmtEur0(fcVal, true);
+  if(lblEl) lblEl.textContent = `ETF-Prognose ${year}`;
+  if(subEl && sparrate > 0){
+    subEl.textContent = `inkl. ${sparrate.toLocaleString('de-DE')} €/Monat Sparrate`;
+  } else if(subEl){
+    subEl.textContent = `${growth}% Wachstum p.a.`;
+  }
+  updateOverviewForecast();
 }
 
 // Krypto Forecast
 function updateCRForecast(){
-  const val = cryptoPositions.reduce((s,p)=>s+Number(p.amount)*(Number(p.price)||0),0);
+  const coins = [...new Set(cryptoTransactions.map(t=>t.coin))];
+  const val = coins.reduce((s,c)=>{ const amt=cryptoTransactions.filter(t=>t.coin===c).reduce((a,t)=>a+Number(t.amount),0); return s+amt*(cryptoPrices[c]?.eur||0); },0);
   renderSFC('cr', val, 'Krypto-Depotwert');
 }
 
