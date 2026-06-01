@@ -617,6 +617,7 @@
   <h3 id="etf-modal-title">ETF hinzufügen</h3>
   <input type="hidden" id="etf-edit-id">
   <div class="form-grid">
+    <div class="form-group"><label>YF Ticker <span style="font-size:9px;color:var(--teal)">überschreibt ISIN-Suche</span></label><input type="text" id="etf-yf-ticker" placeholder="z.B. QDV5.DE" style="text-transform:uppercase"></div>
     <div class="form-group full"><label>Name</label><input type="text" id="etf-name" placeholder="z.B. Vanguard FTSE All-World"></div>
     <div class="form-group"><label>ISIN <span style="font-size:9px;color:var(--text3);">optional, DE/EU Kurs</span></label><input type="text" id="etf-isin" placeholder="z.B. IE00B3RBWM25" style="text-transform:uppercase"></div>
     <div class="form-group"><label>Währung</label><select id="etf-currency"><option value="EUR">EUR</option><option value="USD">USD → EUR</option></select></div>
@@ -1786,6 +1787,19 @@ function renderEtf(){
 }
 
 
+
+// fetchEUPrice with automatic EUR conversion (for direct ticker usage)
+async function fetchEUPriceEur(ticker){
+  if(!eurUsd) await fetchFxRate();
+  const usdToEur = eurUsd ? 1/eurUsd : 0.92;
+  const {price, currency} = await fetchEUPrice(ticker);
+  if(!price) return 0;
+  if(currency==='USD') return price * usdToEur;
+  if(currency==='GBp') return price * 0.01 * 0.87;
+  if(currency==='GBP') return price * 0.87;
+  return price; // EUR or null → return as-is
+}
+
 async function fetchEtfPrices(){
   let fetched=0, errors=[];
   for(const p of etfPositions){
@@ -1805,7 +1819,7 @@ async function fetchEtfPrices(){
 async function saveEtf(){
   const id=document.getElementById('etf-edit-id').value;
   const priceManual=parseFloat(document.getElementById('etf-price-manual').value)||0;
-const data={name:document.getElementById('etf-name').value.trim(),isin:document.getElementById('etf-isin').value.trim().toUpperCase()||null,currency:document.getElementById('etf-currency').value,shares:parseFloat(document.getElementById('etf-shares').value)||0,purchase_price:parseFloat(document.getElementById('etf-purchase').value)||0,price:priceManual||0};
+const data={name:document.getElementById('etf-name').value.trim(),isin:document.getElementById('etf-isin').value.trim().toUpperCase()||null,yf_ticker:document.getElementById('etf-yf-ticker').value.trim().toUpperCase()||null,currency:document.getElementById('etf-currency').value,shares:parseFloat(document.getElementById('etf-shares').value)||0,purchase_price:parseFloat(document.getElementById('etf-purchase').value)||0,price:priceManual||0};
   if(!data.name||!data.shares){ showToast('Name und Anteile erforderlich','err'); return; }
   try{
     if(id) await sbPut('etf_positions',id,data); else await sbPost('etf_positions',data);
@@ -1814,7 +1828,7 @@ const data={name:document.getElementById('etf-name').value.trim(),isin:document.
   }catch(e){ showToast(e.message,'err'); }
 }
 function openEtfAdd(){
-  ['etf-name','etf-isin','etf-shares','etf-purchase','etf-price-manual'].forEach(id=>document.getElementById(id).value='');
+  ['etf-name','etf-isin','etf-yf-ticker','etf-shares','etf-purchase','etf-price-manual'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('etf-edit-id').value='';
   document.getElementById('etf-currency').value='EUR';
   document.getElementById('etf-modal-title').textContent='ETF-Position hinzufügen';
@@ -1825,6 +1839,7 @@ function openEtfEdit(id){
   document.getElementById('etf-edit-id').value=p.id;
   document.getElementById('etf-name').value=p.name||'';
   document.getElementById('etf-isin').value=p.isin||'';
+  document.getElementById('etf-yf-ticker').value=p.yf_ticker||'';
   document.getElementById('etf-currency').value=p.currency||'EUR';
   document.getElementById('etf-shares').value=p.shares||'';
   document.getElementById('etf-purchase').value=p.purchase_price||'';
