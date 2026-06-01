@@ -967,7 +967,7 @@ async function fetchQuoteAV(ticker){
     .replace('.frk','.de').replace('.fra','.de')
     .replace('.lon','.l').replace('.lse','.l')
     .replace('.trt','.ca').replace('.tsx','.ca');
-  const price2 = await fetchEUPrice(stooqTicker);
+  const {price:price2} = await fetchEUPrice(stooqTicker);
   if(price2>0) return price2;
   throw new Error('Kein Kurs für '+ticker);
 }
@@ -2316,7 +2316,9 @@ async function fetchIbPrices(){
       let raw = 0;
       const isTD = TD_SUFFIXES.some(s=>p.ticker.toUpperCase().endsWith(s.toUpperCase()));
       if(isTD){
-        raw = await fetchEUPrice(p.ticker);
+        const {price:_p, currency:_c} = await fetchEUPrice(p.ticker);
+        if(!eurUsd) await fetchFxRate();
+        raw = _c==='USD' ? _p*(1/(eurUsd||1.08)) : _c==='GBp' ? _p*0.01*0.87 : _p;
       } else if(p.ticker.includes('.')){
         const r = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${p.ticker}&apikey=${AV_KEY}`);
         const d = await r.json();
@@ -2529,7 +2531,7 @@ async function loadFcSettings(prefix, updateFn){
 
 // ── Boerse Frankfurt API (ISIN-based, DE/EU stocks & ETFs) ───────────────
 async function fetchBFPrice(isin){
-  let symbol = null;
+  let symbol = null, exchange = null;
   const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${isin}&quotesCount=10&newsCount=0&enableFuzzyQuery=false`;
   for(const url of [
     `https://corsproxy.io/?url=${encodeURIComponent(searchUrl)}`,
@@ -2541,31 +2543,41 @@ async function fetchBFPrice(isin){
       const d = await r.json();
       const quotes = (d?.quotes||[]).filter(q=>q.symbol&&(q.quoteType==='ETF'||q.quoteType==='EQUITY'||q.quoteType==='MUTUALFUND'));
       if(!quotes.length) continue;
-      // Prefer EUR exchanges over GBP/USD listings
       const EUR_EX = ['GER','STU','FRA','MUN','PAR','AMS','BRU','MIL','EBS'];
       const eurHit = quotes.find(q=>EUR_EX.includes(q.exchange));
-      symbol = (eurHit||quotes[0]).symbol;
-      console.log(`YF search ${isin}: picked ${symbol} (exchange: ${(eurHit||quotes[0]).exchange})`);
+      const picked = eurHit || quotes[0];
+      symbol = picked.symbol; exchange = picked.exchange;
+      console.log(`YF search ${isin}: picked ${symbol} (${exchange})`);
       break;
     }catch(e){}
   }
   if(!symbol){ console.warn(`YF search: no ticker for ${isin}`); return 0; }
-  const price = await fetchEUPrice(symbol);
-  if(price > 0){ console.log(`YF ✓ ${isin} → ${symbol} = ${price}`); return price; }
-  return 0;
+
+  const {price, currency} = await fetchEUPrice(symbol);
+  if(!price) return 0;
+
+  // Convert to EUR if needed
+  if(!eurUsd) await fetchFxRate();
+  const usdToEur = eurUsd ? 1/eurUsd : 0.92;
+  let priceEur = price;
+  if(currency === 'USD') priceEur = price * usdToEur;
+  else if(currency === 'GBp') priceEur = price * 0.01 * usdToEur * (eurUsd||1.08) * 0.87; // GBp→GBP→EUR approx
+  else if(currency === 'GBP') priceEur = price * 0.87; // approx GBP/EUR
+
+  console.log(`YF ✓ ${isin} → ${symbol} = ${price} ${currency||'?'} → ${priceEur.toFixed(2)} EUR`);
+  return priceEur;
 }
 
 
 // ── EU/International price fetch ─────────────────────────────────────────
 // Stooq.com: free, no key, covers XETRA (.DE), LSE (.L), TSX (.TRT/.TO)
 async function fetchEUPrice(ticker){
-  // Stooq uses lowercase tickers, .TRT → .CA for Toronto
   const stooqTicker = ticker.toLowerCase()
-    .replace('.trt', '.ca')   // Alpha Vantage TSX format → Stooq
-    .replace('.frk', '.de')   // Alpha Vantage Frankfurt → Stooq
-    .replace('.lon', '.l');   // Alpha Vantage London → Stooq
+    .replace('.frk','.de').replace('.fra','.de')
+    .replace('.lon','.l').replace('.lse','.l')
+    .replace('.trt','.ca').replace('.tsx','.ca');
 
-  // Try Stooq CSV (works from any origin)
+  // Try Stooq CSV first (prices in local currency)
   try{
     const url = `https://stooq.com/q/l/?s=${encodeURIComponent(stooqTicker)}&f=sd2t2ohlcv&h&e=csv`;
     const r = await fetch(url);
@@ -2573,14 +2585,13 @@ async function fetchEUPrice(ticker){
       const text = await r.text();
       const lines = text.trim().split('\n');
       if(lines.length >= 2){
-        const cols = lines[1].split(',');
-        const close = parseFloat(cols[6]); // Close price is 7th column
-        if(close > 0){ console.log(`Stooq ✓ ${ticker} = ${close}`); return close; }
+        const close = parseFloat(lines[1].split(',')[6]);
+        if(close > 0){ return {price:close, currency:null}; } // Stooq EUR listings return EUR
       }
     }
   }catch(e){}
 
-  // Fallback: Yahoo Finance via CORS proxies
+  // Fallback: Yahoo Finance via corsproxy (returns currency metadata)
   const yfUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=5d`;
   for(const proxy of [
     `https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,
@@ -2591,13 +2602,13 @@ async function fetchEUPrice(ticker){
       const r = await fetch(proxy, {headers:{'Accept':'application/json'}});
       if(!r.ok) continue;
       const d = JSON.parse(await r.text());
-      const price = d?.chart?.result?.[0]?.meta?.regularMarketPrice || 0;
-      if(price > 0){ console.log(`YF ✓ ${ticker} = ${price}`); return price; }
+      const meta = d?.chart?.result?.[0]?.meta;
+      const price = meta?.regularMarketPrice || 0;
+      const currency = meta?.currency || null;
+      if(price > 0){ return {price, currency}; }
     }catch(e){}
   }
-
-  console.warn(`No price found for ${ticker}`);
-  return 0;
+  return {price:0, currency:null};
 }
 const TD_EXCHANGE_MAP = {
   '.L':  'LSE',    // London Stock Exchange
