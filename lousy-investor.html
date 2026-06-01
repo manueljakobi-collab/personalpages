@@ -1709,6 +1709,10 @@ function editEtfCash(){
   document.getElementById('etf-cash-input').value = etfCashValue||'';
   document.getElementById('etf-cash-modal').classList.add('open');
 }
+function editIbCash(){
+  document.getElementById('ib-cash-input').value = ibCashValue||'';
+  document.getElementById('ib-cash-modal').classList.add('open');
+}
 async function saveEtfCash(){
   etfCashValue = parseFloat(document.getElementById('etf-cash-input').value)||0;
   document.getElementById('etf-cash-modal').classList.remove('open');
@@ -1809,6 +1813,27 @@ const data={name:document.getElementById('etf-name').value.trim(),isin:document.
     showToast('Gespeichert','ok'); loadEtf();
   }catch(e){ showToast(e.message,'err'); }
 }
+function openEtfAdd(){
+  ['etf-name','etf-isin','etf-shares','etf-purchase','etf-price-manual'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('etf-edit-id').value='';
+  document.getElementById('etf-currency').value='EUR';
+  document.getElementById('etf-modal-title').textContent='ETF-Position hinzufügen';
+  document.getElementById('etf-modal').classList.add('open');
+}
+function openEtfEdit(id){
+  const p=etfPositions.find(x=>x.id===id); if(!p) return;
+  document.getElementById('etf-edit-id').value=p.id;
+  document.getElementById('etf-name').value=p.name||'';
+  document.getElementById('etf-isin').value=p.isin||'';
+  document.getElementById('etf-currency').value=p.currency||'EUR';
+  document.getElementById('etf-shares').value=p.shares||'';
+  document.getElementById('etf-purchase').value=p.purchase_price||'';
+  document.getElementById('etf-price-manual').value=p.price||'';
+  document.getElementById('etf-modal-title').textContent='ETF-Position bearbeiten';
+  document.getElementById('etf-modal').classList.add('open');
+}
+
+
 async function deleteEtf(id){
   if(!confirm('Position löschen?')) return;
   await sbDelete('etf_positions',id); loadEtf();
@@ -2504,9 +2529,8 @@ async function loadFcSettings(prefix, updateFn){
 
 // ── Boerse Frankfurt API (ISIN-based, DE/EU stocks & ETFs) ───────────────
 async function fetchBFPrice(isin){
-  // Step 1: ISIN → Yahoo Finance Ticker via Search API
   let symbol = null;
-  const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${isin}&quotesCount=1&newsCount=0&enableFuzzyQuery=false`;
+  const searchUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${isin}&quotesCount=10&newsCount=0&enableFuzzyQuery=false`;
   for(const url of [
     `https://corsproxy.io/?url=${encodeURIComponent(searchUrl)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(searchUrl)}`,
@@ -2515,14 +2539,19 @@ async function fetchBFPrice(isin){
       const r = await fetch(url, {headers:{'Accept':'application/json'}});
       if(!r.ok) continue;
       const d = await r.json();
-      const hit = d?.quotes?.find(q=>q.symbol&&(q.quoteType==='ETF'||q.quoteType==='EQUITY'||q.quoteType==='MUTUALFUND'));
-      if(hit?.symbol){ symbol = hit.symbol; break; }
+      const quotes = (d?.quotes||[]).filter(q=>q.symbol&&(q.quoteType==='ETF'||q.quoteType==='EQUITY'||q.quoteType==='MUTUALFUND'));
+      if(!quotes.length) continue;
+      // Prefer EUR exchanges over GBP/USD listings
+      const EUR_EX = ['GER','STU','FRA','MUN','PAR','AMS','BRU','MIL','EBS'];
+      const eurHit = quotes.find(q=>EUR_EX.includes(q.exchange));
+      symbol = (eurHit||quotes[0]).symbol;
+      console.log(`YF search ${isin}: picked ${symbol} (exchange: ${(eurHit||quotes[0]).exchange})`);
+      break;
     }catch(e){}
   }
   if(!symbol){ console.warn(`YF search: no ticker for ${isin}`); return 0; }
-  // Step 2: Ticker → Kurs
   const price = await fetchEUPrice(symbol);
-  if(price>0){ console.log(`YF ✓ ${isin} → ${symbol} = ${price}`); return price; }
+  if(price > 0){ console.log(`YF ✓ ${isin} → ${symbol} = ${price}`); return price; }
   return 0;
 }
 
