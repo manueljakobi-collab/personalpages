@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vorsorge Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg:#0d0f14;--surface:#141720;--surface2:#1a1e2a;
+  --border:#252b3b;--border2:#2e3547;--text:#e4e8f0;--muted:#6b7591;
+  --accent:#4ade80;--accent2:#22c55e;--warn:#f59e0b;--danger:#f87171;
+  --blue:#60a5fa;--mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.header-title{font-size:16px;font-weight:600;letter-spacing:-.3px}
+.header-title span{color:var(--accent)}
+.btn-icon{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 10px;cursor:pointer;font-size:13px}
+.btn-icon:hover{color:var(--text)}
+.tab-bar{display:flex;gap:2px;padding:12px 24px 0;border-bottom:1px solid var(--border);background:var(--surface)}
+.tab{padding:8px 16px;border-radius:6px 6px 0 0;cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;border:1px solid transparent;border-bottom:none;transition:all .15s;position:relative;bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab.active{color:var(--accent);background:var(--bg);border-color:var(--border);border-bottom-color:var(--bg)}
+.tab-badge{display:inline-block;background:var(--danger);color:#fff;border-radius:10px;font-size:10px;font-weight:600;padding:1px 5px;margin-left:5px;vertical-align:middle;line-height:14px}
+main{padding:24px;max-width:1600px;margin:0 auto}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--accent);border-radius:2px}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kpi-val{font-family:var(--mono);font-size:22px;font-weight:500}
+.kpi-val.danger{color:var(--danger)}.kpi-val.warn{color:var(--warn)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.two-col .card{margin-bottom:0}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);font-weight:500}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:10px 12px;font-size:13px}
+.mono{font-family:var(--mono);font-size:12px}
+.badge{display:inline-block;border-radius:5px;font-size:11px;font-weight:600;padding:2px 8px;white-space:nowrap}
+.badge-ok{background:#1a3a2a;color:var(--accent);border:1px solid #2a5a3a}
+.badge-warn{background:#3a2e0a;color:var(--warn);border:1px solid #5a4a10}
+.badge-due{background:#3a1a0a;color:var(--danger);border:1px solid #5a2a10}
+.badge-future{background:#1a2535;color:var(--blue);border:1px solid #2a3a55}
+.cat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border2);color:var(--text);border-radius:6px;padding:8px 10px;font-size:13px;font-family:var(--sans);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:60px}
+select option{background:var(--surface2)}
+.btn{border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s}
+.btn-primary{background:var(--accent2);color:#0a1a10}.btn-primary:hover{background:var(--accent)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--muted)}.btn-ghost:hover{color:var(--text);border-color:var(--text)}
+.btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger)}.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-sm{padding:4px 10px;font-size:12px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:inline-block;width:3px;height:14px;background:var(--accent);border-radius:2px}
+.impf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.impf-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:32px;margin-bottom:10px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:24px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+.modal-close:hover{color:var(--text)}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;font-size:13px;display:none;z-index:999}
+#toast.ok{border-color:var(--accent);color:var(--accent)}
+#toast.err{border-color:var(--danger);color:var(--danger)}
+.fw500{font-weight:500}.nowrap{white-space:nowrap}
+@media(max-width:640px){main{padding:12px}.kpi-row,.two-col{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="font-size:22px">🩺</span>
+    <span class="header-title">Vorsorge<span>Tracker</span></span>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-icon" onclick="openSettings()">⚙ Einstellungen</button>
+    <button class="btn-icon" onclick="refreshAll()">↻</button>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('uebersicht')" id="tab-btn-uebersicht">Übersicht</div>
+  <div class="tab" onclick="showTab('regeltermine')" id="tab-btn-regeltermine">Regeltermine</div>
+  <div class="tab" onclick="showTab('isttermine')" id="tab-btn-isttermine">Ist-Termine <span class="tab-badge" id="badge-faellig" style="display:none">!</span></div>
+  <div class="tab" onclick="showTab('impfungen')" id="tab-btn-impfungen">Impfungen</div>
+</div>
+
+<main>
+
+<!-- ÜBERSICHT -->
+<div id="panel-uebersicht" class="panel active">
+
+  <div class="two-col">
+    <div class="card"><div class="card-title">Handlungsbedarf</div><div id="list-faellig"></div></div>
+    <div class="card"><div class="card-title">Nächste Termine</div><div id="list-naechste"></div></div>
+  </div>
+  <div class="card" style="padding:20px 0">
+    <div class="card-title" style="padding:0 20px">Jahresübersicht</div>
+    <div class="table-wrap" style="padding:0 20px">
+      <table id="matrix-table">
+        <thead><tr id="matrix-head"></tr></thead>
+        <tbody id="matrix-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- REGELTERMINE -->
+<div id="panel-regeltermine" class="panel">
+  <div class="sec-hdr">
+    <div class="sec-title">Regeltermine (Vorlagen mit Intervall)</div>
+    <button class="btn btn-primary btn-sm" onclick="openAddRegel()">+ Neuer Regeltermin</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Untersuchung</th><th>Kategorie</th><th>Arzt</th>
+          <th>Intervall</th><th>Ab Jahr</th><th>Erinnerung</th><th>Notiz</th><th></th>
+        </tr></thead>
+        <tbody id="regel-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- IST-TERMINE -->
+<div id="panel-isttermine" class="panel">
+  <div class="sec-hdr">
+    <div class="sec-title">Ist-Termine (tatsächliche Besuche)</div>
+    <button class="btn btn-primary btn-sm" onclick="openAddIst()">+ Termin eintragen</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Untersuchung</th><th>Datum</th><th>Arzt</th><th>Notiz</th><th>Status</th><th></th>
+        </tr></thead>
+        <tbody id="ist-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- IMPFUNGEN -->
+<div id="panel-impfungen" class="panel">
+  <div class="sec-hdr">
+    <div class="sec-title">Impfstatus</div>
+    <button class="btn btn-primary btn-sm" onclick="openAddImpf()">+ Impfung</button>
+  </div>
+  <div class="impf-grid" id="impf-grid"></div>
+</div>
+
+</main>
+
+<!-- MODAL: Regeltermin -->
+<div class="modal-overlay" id="modal-regel">
+  <div class="modal">
+    <div class="modal-title"><span id="modal-regel-title">Neuer Regeltermin</span><button class="modal-close" onclick="closeModal('modal-regel')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Vorlage wählen</label>
+        <select id="r-preset" onchange="applyRegelPreset()">
+          <option value="">— Frei eingeben —</option>
+          <option value="z1">Zahnarzt Check-up (1. Halbjahr)</option>
+          <option value="z2">Zahnarzt Check-up (2. Halbjahr)</option>
+          <option value="hk">Hautkrebsvorsorge</option>
+          <option value="sd">Schilddrüse Check</option>
+          <option value="ur">Urologie</option>
+          <option value="sp">Darmkrebs — Stuhlprobe (iFOBT)</option>
+          <option value="ds">Darmspiegelung (Koloskopie)</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Bezeichnung *</label>
+        <input type="text" id="r-name" placeholder="z.B. Zahnarzt Check-up">
+      </div>
+      <div class="form-group">
+        <label>Kategorie</label>
+        <select id="r-kat">
+          <option value="vorsorge">Vorsorge</option>
+          <option value="facharzt">Facharzt</option>
+          <option value="check">Check-up</option>
+          <option value="sonstig">Sonstig</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Arzt / Einrichtung</label>
+        <input type="text" id="r-arzt">
+      </div>
+      <div class="form-group">
+        <label>Intervall (Monate)</label>
+        <input type="number" id="r-intervall" value="12" min="1" max="240">
+      </div>
+      <div class="form-group">
+        <label>Erinnerung (Tage vorher)</label>
+        <input type="number" id="r-erinnerung" value="30" min="0">
+      </div>
+      <div class="form-group">
+        <label>Untersuchung ab Jahr (leer = sofort)</label>
+        <input type="number" id="r-abjahr" placeholder="z.B. 2030" min="2000" max="2100">
+      </div>
+      <div class="form-group full">
+        <label>Notiz</label>
+        <textarea id="r-notiz"></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-regel')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveRegel()">Speichern</button>
+    </div>
+    <input type="hidden" id="r-id">
+  </div>
+</div>
+
+<!-- MODAL: Ist-Termin -->
+<div class="modal-overlay" id="modal-ist">
+  <div class="modal">
+    <div class="modal-title"><span id="modal-ist-title">Termin eintragen</span><button class="modal-close" onclick="closeModal('modal-ist')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Regeltermin zuordnen</label>
+        <select id="i-regel">
+          <option value="">— Frei eingeben —</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Bezeichnung *</label>
+        <input type="text" id="i-name" placeholder="z.B. Zahnarzt Check-up (1. Halbjahr)">
+      </div>
+      <div class="form-group">
+        <label>Datum des Besuchs *</label>
+        <input type="date" id="i-datum">
+      </div>
+      <div class="form-group">
+        <label>Arzt / Einrichtung</label>
+        <input type="text" id="i-arzt">
+      </div>
+      <div class="form-group full">
+        <label>Notiz / Befund</label>
+        <textarea id="i-notiz"></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-ist')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveIst()">Speichern</button>
+    </div>
+    <input type="hidden" id="i-id">
+  </div>
+</div>
+
+<!-- MODAL: Impfung -->
+<div class="modal-overlay" id="modal-impf">
+  <div class="modal">
+    <div class="modal-title"><span id="modal-impf-title">Impfung eintragen</span><button class="modal-close" onclick="closeModal('modal-impf')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Impfung *</label>
+        <input type="text" id="ii-name" list="impf-list" placeholder="z.B. Tetanus">
+        <datalist id="impf-list">
+          <option value="Tetanus"><option value="Diphtherie"><option value="Masern">
+          <option value="Influenza (Grippe)"><option value="COVID-19"><option value="FSME">
+          <option value="Hepatitis B"><option value="Pneumokokken"><option value="Gürtelrose (Zoster)">
+        </datalist>
+      </div>
+      <div class="form-group"><label>Letzte Impfung</label><input type="date" id="ii-datum" onchange="autoImpfNaechste()"></div>
+      <div class="form-group"><label>Nächste Auffrischung</label><input type="date" id="ii-naechste"></div>
+      <div class="form-group"><label>Intervall (Jahre)</label><input type="number" id="ii-iv" value="10" min="0" max="50" onchange="autoImpfNaechste()"></div>
+      <div class="form-group full"><label>Notiz</label><textarea id="ii-notiz"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-impf')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveImpf()">Speichern</button>
+    </div>
+    <input type="hidden" id="ii-id">
+  </div>
+</div>
+
+<!-- MODAL: Einstellungen -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-title">Einstellungen <button class="modal-close" onclick="closeModal('modal-settings')">✕</button></div>
+    <div class="form-group" style="margin-bottom:12px"><label>Supabase URL</label><input type="text" id="s-url"></div>
+    <div class="form-group" style="margin-bottom:16px"><label>Anon Key</label><input type="text" id="s-key"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-settings')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var SB_URL = "https://mpuywzmwlcuywyakrkpn.supabase.co";
+var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wdXl3em13bGN1eXd5YWtya3BuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2OTA2MDgsImV4cCI6MjA5NTI2NjYwOH0._mTtxGMK5zubRfdfhrLEgnw84XVjKDYppOHH6sfHDXU";
+
+function loadCfg() {
+  try { var c = JSON.parse(localStorage.getItem('vt-cfg')||'{}'); if(c.url){SB_URL=c.url;SB_KEY=c.key;} } catch(e){}
+}
+function saveCfg(u,k) { SB_URL=u; SB_KEY=k; localStorage.setItem('vt-cfg',JSON.stringify({url:u,key:k})); }
+
+async function sbReq(method, table, body, qs) {
+  var r = await fetch(SB_URL+'/rest/v1/'+table+(qs||''), {
+    method: method,
+    headers: { 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!r.ok) { throw new Error(await r.text()); }
+  var t = await r.text(); return t ? JSON.parse(t) : [];
+}
+async function dbGet(tbl,qs) { return sbReq('GET',tbl,null,qs); }
+async function dbPost(tbl,b) { return sbReq('POST',tbl,b); }
+async function dbPatch(tbl,id,b) { return sbReq('PATCH',tbl,b,'?id=eq.'+id); }
+async function dbDel(tbl,id) { return sbReq('DELETE',tbl,null,'?id=eq.'+id); }
+
+var D = { regel:[], ist:[], impf:[] };
+
+async function refreshAll() {
+  try {
+    var r = await Promise.all([
+      dbGet('vt_regeltermine','?order=name.asc'),
+      dbGet('vt_isttermine','?order=datum.desc'),
+      dbGet('vt_impfungen','?order=name.asc')
+    ]);
+    D.regel = r[0]||[]; D.ist = r[1]||[]; D.impf = r[2]||[];
+    renderAll();
+  } catch(e) { toast('Fehler: '+e.message,'err'); }
+}
+
+function fmt(d) { if(!d)return'—'; var p=d.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
+function esc(s) { if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function addMonths(ds,m) { var d=new Date(ds); d.setMonth(d.getMonth()+m); return d.toISOString().split('T')[0]; }
+function toast(msg,type) { var el=document.getElementById('toast'); el.textContent=msg; el.className=type||'ok'; el.style.display='block'; setTimeout(function(){el.style.display='none';},3000); }
+
+// Farben pro Terminart
+var COLORS = [
+  {kw:['zahnarzt'],c:'#a78bfa'},
+  {kw:['hautkrebs'],c:'#f472b6'},
+  {kw:['schilddr'],c:'#38bdf8'},
+  {kw:['urolog'],c:'#fb923c'},
+  {kw:['stuhlprobe','ifobt','darmkrebs'],c:'#4ade80'},
+  {kw:['darmspiegelung','koloskopie'],c:'#34d399'}
+];
+function tColor(name) {
+  var n=(name||'').toLowerCase();
+  for(var i=0;i<COLORS.length;i++) for(var j=0;j<COLORS[i].kw.length;j++) if(n.indexOf(COLORS[i].kw[j])>=0) return COLORS[i].c;
+  return '#6b7591';
+}
+function katLabel(k) { return {vorsorge:'Vorsorge',facharzt:'Facharzt',check:'Check-up',sonstig:'Sonstig'}[k]||k||'—'; }
+
+// Nächsten fälligen Termin für einen Regeltermin berechnen
+// Basis: letzter Ist-Termin mit passendem Namen; falls keiner: kein next
+function lastIst(regel) {
+  var rLow = (regel.name||'').toLowerCase();
+  var matches = D.ist.filter(function(i) {
+    var iLow = (i.name||'').toLowerCase();
+    return iLow === rLow || iLow.indexOf(rLow) >= 0 || rLow.indexOf(iLow) >= 0;
+  });
+  if (!matches.length) return null;
+  return matches.sort(function(a,b){return (b.datum||'').localeCompare(a.datum||'');})[0];
+}
+
+function latestIstAbgehakt(regel) {
+  // Ist der neueste Ist-Termin abgehakt?
+  var last = lastIst(regel);
+  return last && !!last.abgehakt;
+}
+
+function nextDatum(regel) {
+  var last = lastIst(regel);
+  if (!last || !last.datum) return null;
+  return addMonths(last.datum, regel.intervall_monate||12);
+}
+
+function regelFälligInJahr(regel, year) {
+  // Prüft ob ein Regeltermin in einem bestimmten Jahr fällig ist
+  var abJahr = regel.ab_jahr ? parseInt(regel.ab_jahr) : 0;
+  if (abJahr > year) return false;
+  var iv = regel.intervall_monate || 12;
+  // Startjahr: ab_jahr oder ältester abgehakter Ist-Termin
+  var rLow = (regel.name||'').toLowerCase();
+  var abgehakte = D.ist.filter(function(i){
+    var iLow=(i.name||'').toLowerCase();
+    return (iLow===rLow||iLow.indexOf(rLow)>=0||rLow.indexOf(iLow)>=0)&&(i.abgehakt===true||i.abgehakt==='true');
+  });
+  var startYear = abJahr || new Date().getFullYear();
+  if (abgehakte.length) {
+    var oldest = abgehakte.sort(function(a,b){return (a.datum||'').localeCompare(b.datum||'');})[0];
+    if (oldest.datum) startYear = new Date(oldest.datum).getFullYear();
+  }
+  // Vorwärts iterieren bis year
+  var d = startYear + '-01-01';
+  for (var n = 0; n < 200; n++) {
+    var yr = new Date(d).getFullYear();
+    if (yr === year) return true;
+    if (yr > year) return false;
+    d = addMonths(d, iv);
+  }
+  return false;
+}
+
+function getStatus(regel) {
+  if (latestIstAbgehakt(regel)) return 'erledigt';
+  var CY = new Date().getFullYear();
+  // Ist Regeltermin dieses Jahr überhaupt fällig?
+  if (!regelFälligInJahr(regel, CY)) return 'bevorstehend';
+  // Kein Ist-Termin im aktuellen Kalenderjahr → Handlungsbedarf
+  var rLow = (regel.name||'').toLowerCase();
+  var hatIstDiesesJahr = D.ist.some(function(i) {
+    var iLow = (i.name||'').toLowerCase();
+    var nameMatch = iLow===rLow||iLow.indexOf(rLow)>=0||rLow.indexOf(iLow)>=0;
+    return nameMatch && i.datum && new Date(i.datum).getFullYear()===CY;
+  });
+  if (!hatIstDiesesJahr) return 'kein_ist';
+  var next = nextDatum(regel);
+  if (!next) return 'kein_termin';
+  var diff = Math.ceil((new Date(next)-new Date())/86400000);
+  if (diff < 0) return 'faellig';
+  if (diff <= (regel.erinnerung_tage||30)) return 'bald';
+  return 'bevorstehend';
+}
+
+function statusBadge(regel) {
+  var s = getStatus(regel);
+  if (s==='faellig')    return '<span class="badge badge-due">Überfällig</span>';
+  if (s==='bald')       return '<span class="badge badge-warn">Bald fällig</span>';
+  if (s==='kein_ist')   return '<span class="badge badge-warn">Kein Ist-Termin</span>';
+  if (s==='bevorstehend') return '<span class="badge badge-future">Bevorstehend</span>';
+  return '';
+}
+
+function renderAll() { renderKPIs(); renderUebersicht(); renderMatrix(); renderRegel(); renderIst(); renderImpf(); }
+
+function renderKPIs() {
+  var f=D.regel.filter(function(r){return getStatus(r)==='faellig';}).length;
+  var b=D.regel.filter(function(r){return getStatus(r)==='bald';}).length;
+  var g=document.getElementById('kpi-regel'); if(g)g.textContent=D.regel.length;
+  var ff=document.getElementById('kpi-faellig'); if(ff)ff.textContent=f;
+  var bb=document.getElementById('kpi-bald'); if(bb)bb.textContent=b;
+  var badge=document.getElementById('badge-faellig');
+  if(badge){if(f>0){badge.style.display='inline';badge.textContent=f;}else{badge.style.display='none';}}
+}
+
+function renderUebersicht() {
+  // Impf-Hilfsfunktionen
+  function iSt(i) {
+    if(!i.naechste_auffrischung)return'ok';
+    var d=Math.ceil((new Date(i.naechste_auffrischung)-new Date())/86400000);
+    if(d<0)return'faellig'; if(d<=180)return'bald'; return'ok';
+  }
+  function iBadge(i) {
+    var s=iSt(i);
+    if(s==='faellig')return'<span class="badge badge-due">Überfällig</span>';
+    if(s==='bald')return'<span class="badge badge-warn">Bald fällig</span>';
+    return'<span class="badge badge-future">Bevorstehend</span>';
+  }
+
+  // Handlungsbedarf
+  var fr=D.regel.filter(function(r){var s=getStatus(r);return s==='faellig'||s==='bald'||s==='kein_ist';});
+  var fi=D.impf.filter(function(i){var s=iSt(i);return s==='faellig'||s==='bald';});
+  var fl=document.getElementById('list-faellig');
+  if(!fr.length&&!fi.length) {
+    fl.innerHTML='<div class="empty"><div class="empty-icon">✅</div><p>Kein Handlungsbedarf.</p></div>';
+  } else {
+    var h=fr.map(function(r){
+      var s=getStatus(r),bc=s==='faellig'?'var(--danger)':'var(--warn)',bg=s==='faellig'?'rgba(248,113,113,.06)':'rgba(245,158,11,.06)';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:8px;border-left:3px solid '+bc+';background:'+bg+'">'+
+        '<div><span class="cat-dot" style="background:'+tColor(r.name)+'"></span><span style="font-weight:600;font-size:13px">'+esc(r.name)+'</span>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:8px">'+statusBadge(r)+'<button class="btn btn-primary btn-sm" onclick="openAddIstFor(\''+r.id+'\')">Termin eintragen</button></div></div>';
+    }).join('');
+    if(fi.length){
+      h+='<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:12px 0 6px">Impfungen</div>';
+      h+=fi.map(function(i){
+        var s=iSt(i),bc=s==='faellig'?'var(--danger)':'var(--warn)',bg=s==='faellig'?'rgba(248,113,113,.06)':'rgba(245,158,11,.06)';
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:8px;border-left:3px solid '+bc+';background:'+bg+'">'+
+          '<div><span class="cat-dot" style="background:#a78bfa"></span><span style="font-weight:600;font-size:13px">'+esc(i.name)+'</span>'+
+          '<span style="font-size:11px;color:var(--muted);margin-left:6px">'+fmt(i.naechste_auffrischung)+'</span></div>'+
+          '<div>'+iBadge(i)+'</div></div>';
+      }).join('');
+    }
+    fl.innerHTML=h;
+  }
+
+  // Nächste Termine
+  var nt=D.regel.filter(function(r){
+    var s=getStatus(r);
+    if(s!=='bevorstehend'&&s!=='bald') return false;
+    var nd=nextDatum(r);
+    return !!nd; // nur wenn ein echter nächster Termin berechenbar ist
+  })
+    .sort(function(a,b){return (nextDatum(a)||'').localeCompare(nextDatum(b)||'');}).slice(0,7);
+  var ni=D.impf.filter(function(i){return iSt(i)==='ok'&&i.naechste_auffrischung;})
+    .sort(function(a,b){return (a.naechste_auffrischung||'').localeCompare(b.naechste_auffrischung||'');}).slice(0,3);
+  var nl=document.getElementById('list-naechste');
+  if(!nt.length&&!ni.length) {
+    nl.innerHTML='<p style="color:var(--muted);font-size:13px">Keine geplanten Termine.</p>';
+  } else {
+    var h2=nt.map(function(r){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">'+
+        '<div style="display:flex;align-items:center;gap:10px"><span class="cat-dot" style="background:'+tColor(r.name)+'"></span>'+
+        '<div><span style="font-weight:500;font-size:13px">'+esc(r.name)+'</span>'+
+        '<span style="color:var(--muted);font-size:11px;margin-left:8px">'+katLabel(r.kategorie)+'</span></div></div>'+
+        '<span class="mono" style="color:var(--muted)">'+fmt(nextDatum(r))+'</span></div>';
+    }).join('');
+    h2+=ni.map(function(i){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">'+
+        '<div style="display:flex;align-items:center;gap:10px"><span class="cat-dot" style="background:#a78bfa"></span>'+
+        '<span style="font-weight:500;font-size:13px">'+esc(i.name)+'</span></div>'+
+        '<span class="mono" style="color:var(--muted)">'+fmt(i.naechste_auffrischung)+'</span></div>';
+    }).join('');
+    nl.innerHTML=h2;
+  }
+}
+
+function renderMatrix() {
+  if(!D.regel.length) return;
+  var CY=new Date().getFullYear();
+  var years=[]; for(var y=CY;y<=CY+10;y++) years.push(y);
+
+  // Sortierung
+  var ORD=['zahnarzt','hautkrebs','schilddr','urolog','stuhlprobe','ifobt','darmkrebs','darmspiegelung','koloskopie'];
+  function sIdx(name) { var n=(name||'').toLowerCase(); for(var i=0;i<ORD.length;i++) if(n.indexOf(ORD[i])>=0) return i; return 99; }
+  var regel=D.regel.slice().sort(function(a,b){return sIdx(a.name)-sIdx(b.name);});
+
+  // Für jeden Regeltermin: Ist-Termine als Set {Jahr: true}
+  function istJahre(r) {
+    var rLow=(r.name||'').toLowerCase();
+    var s=new Set();
+    D.ist.forEach(function(i){
+      var iLow=(i.name||'').toLowerCase();
+      var nameMatch=iLow===rLow||iLow.indexOf(rLow)>=0||rLow.indexOf(iLow)>=0;
+      var abgehakt=(i.abgehakt===true||i.abgehakt==='true'||i.abgehakt===1);
+      if(nameMatch&&i.datum&&abgehakt){
+        s.add(new Date(i.datum).getFullYear());
+      }
+    });
+    return s;
+  }
+
+  // Für jeden Regeltermin: fällige Jahre aus Intervall
+  function fJahre(r) {
+    var s=new Set();
+    // Startjahr: ältester ABGEHAKTER Ist-Termin, sonst ab_jahr, sonst aktuelles Jahr
+    var matches=D.ist.filter(function(i){
+      var rL=(r.name||'').toLowerCase(), iL=(i.name||'').toLowerCase();
+      var nameMatch=iL===rL||iL.indexOf(rL)>=0||rL.indexOf(iL)>=0;
+      var abgehakt=(i.abgehakt===true||i.abgehakt==='true'||i.abgehakt===1);
+      return nameMatch&&abgehakt;
+    });
+    var startYear = CY;
+    if(matches.length){
+      var oldest=matches.sort(function(a,b){return (a.datum||'').localeCompare(b.datum||'');})[0];
+      if(oldest.datum) startYear=new Date(oldest.datum).getFullYear();
+    }
+    // ab_jahr: Regeltermin erscheint erst ab diesem Jahr
+    if(r.ab_jahr && parseInt(r.ab_jahr) > startYear) startYear = parseInt(r.ab_jahr);
+    var iv=r.intervall_monate||12;
+    var d=startYear+'-01-01';
+    for(var n=0;n<200;n++){
+      var yr=new Date(d).getFullYear();
+      if(yr>CY+10)break;
+      s.add(yr);
+      d=addMonths(d,iv);
+    }
+    return s;
+  }
+
+  // Header
+  var ths='<th style="font-size:11px;color:var(--muted);padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);font-family:var(--mono)">Jahr</th>';
+  ths+=regel.map(function(r){
+    return '<th style="font-size:11px;color:var(--muted);padding:8px 8px 12px;text-align:center;border-bottom:1px solid var(--border);white-space:normal;font-weight:500;min-width:80px;max-width:120px;word-break:break-word;line-height:1.3;vertical-align:bottom" title="'+esc(r.name)+'">'+
+      '<span class="cat-dot" style="background:'+tColor(r.name)+'"></span>'+esc(r.name)+'</th>';
+  }).join('');
+  document.getElementById('matrix-head').innerHTML=ths;
+
+  var tdb='text-align:center;padding:8px 10px;border-bottom:1px solid var(--border);';
+  document.getElementById('matrix-body').innerHTML=years.map(function(y){
+    var isPast=y<CY, isCur=y===CY;
+    var ys='font-family:var(--mono);font-size:13px;padding:8px 10px;border-bottom:1px solid var(--border);';
+    if(isCur)ys+='font-weight:700;color:var(--accent);';
+    else if(isPast)ys+='color:var(--muted);';
+    var cells=regel.map(function(r){
+      var fj=fJahre(r), ij=istJahre(r);
+      if(!fj.has(y)) return '<td style="'+tdb+'"><span style="color:var(--border2);font-size:16px">·</span></td>';
+      var c=tColor(r.name);
+      if(ij.has(y)) {
+        // Ist-Termin vorhanden → Haken
+        return '<td style="'+tdb+'"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:'+c+';line-height:24px;font-size:12px;font-weight:700;color:#0d0f14;text-align:center" title="Termin stattgefunden">✓</span></td>';
+      } else if(isPast) {
+        // Vergangenes Jahr ohne Ist-Termin → gedämpfter Punkt
+        return '<td style="'+tdb+'"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:'+c+';opacity:.4" title="Kein Termin eingetragen"></span></td>';
+      } else {
+        // Zukunft → Punkt
+        return '<td style="'+tdb+'"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:'+c+';opacity:'+(isCur?.65:.3)+'" title="Ausstehend"></span></td>';
+      }
+    }).join('');
+    return '<tr style="'+(isCur?'background:rgba(74,222,128,.04)':'')+'"><td style="'+ys+'">'+y+(isCur?' ◀':'')+' </td>'+cells+'</tr>';
+  }).join('');
+
+  // Legende
+  var card=document.getElementById('matrix-table').closest('.card');
+  var leg=card.querySelector('.matrix-legend');
+  if(!leg){leg=document.createElement('div');leg.className='matrix-legend';card.appendChild(leg);}
+leg.innerHTML="";
+}
+
+function renderRegel() {
+  var tb=document.getElementById('regel-body');
+  if(!D.regel.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">Keine Regeltermine. Bitte anlegen.</td></tr>';return;}
+  tb.innerHTML=D.regel.map(function(r){
+    return '<tr>'+
+      '<td class="fw500"><span class="cat-dot" style="background:'+tColor(r.name)+'"></span>'+esc(r.name)+'</td>'+
+      '<td>'+katLabel(r.kategorie)+'</td>'+
+      '<td style="color:var(--muted)">'+esc(r.arzt||'—')+'</td>'+
+      '<td class="mono">'+(r.intervall_monate||'—')+' Mo.</td>'+
+      '<td class="mono">'+(r.ab_jahr||'—')+'</td>'+
+      '<td class="mono">'+(r.erinnerung_tage||30)+' Tage</td>'+
+      '<td style="color:var(--muted);font-size:12px">'+esc(r.notiz||'')+'</td>'+
+      '<td class="nowrap">'+
+        '<button class="btn btn-ghost btn-sm" onclick="editRegel(\''+r.id+'\')">✎</button> '+
+        '<button class="btn btn-danger btn-sm" onclick="delRegel(\''+r.id+'\')">✕</button>'+
+      '</td></tr>';
+  }).join('');
+}
+
+function renderIst() {
+  var tb=document.getElementById('ist-body');
+  if(!D.ist.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px">Keine Ist-Termine eingetragen.</td></tr>';return;}
+  var sorted=D.ist.slice().sort(function(a,b){return (b.datum||'').localeCompare(a.datum||'');});
+  tb.innerHTML=sorted.map(function(i){
+    var done=!!i.abgehakt;
+    var istStatus='ausstehend';
+    if(done){
+      istStatus='erledigt';
+    } else {
+      var regel=D.regel.find(function(r){var rL=(r.name||'').toLowerCase(),iL=(i.name||'').toLowerCase();return rL===iL||iL.indexOf(rL)>=0||rL.indexOf(iL)>=0;});
+      if(regel){var naechst=nextDatum(regel);if(naechst){var diff=Math.ceil((new Date(naechst)-new Date())/86400000);if(diff<0)istStatus='faellig';else if(diff<=(regel.erinnerung_tage||30))istStatus='bald';}}
+    }
+    var sBadge=istStatus==='erledigt'?'<span class="badge badge-ok">&#10003; Erledigt</span>':istStatus==='faellig'?'<span class="badge badge-due">&#220;berf&#228;llig</span>':istStatus==='bald'?'<span class="badge badge-warn">Bald f&#228;llig</span>':'<span class="badge badge-future">Ausstehend</span>';
+    var btnC=done?'border:1px solid var(--accent);color:var(--accent);background:transparent':'border:1px solid var(--muted);color:var(--muted);background:transparent';
+    var iid=i.id;
+    return '<tr style="'+(done?'opacity:0.65':'')+'">'+
+      '<td class="fw500"><span class="cat-dot" style="background:'+tColor(i.name)+'"></span>'+esc(i.name)+'</td>'+
+      '<td class="mono">'+fmt(i.datum)+'</td>'+
+      '<td style="color:var(--muted)">'+esc(i.arzt||'—')+'</td>'+
+      '<td style="color:var(--muted);font-size:12px">'+esc(i.notiz||'')+'</td>'+
+      '<td>'+sBadge+'</td>'+
+      '<td class="nowrap">'+
+        '<button class="btn btn-sm" style="'+btnC+'" data-id="'+iid+'" onclick="toggleAbgehakt(this,'+done+')" title="'+(done?'R&#252;ckg&#228;ngig':'Abhaken')+'">&#10003;</button>'+
+        ' <button class="btn btn-ghost btn-sm" data-id="'+iid+'" onclick="editIst(this)">&#9998;</button>'+
+        ' <button class="btn btn-danger btn-sm" data-id="'+iid+'" onclick="delIst(this)">&#10005;</button>'+
+      '</td></tr>';
+  }).join('');
+}
+
+function renderImpf() {
+  var g=document.getElementById('impf-grid');
+  if(!D.impf.length){g.innerHTML='<div class="empty"><div class="empty-icon">💉</div><p>Noch keine Impfungen.</p></div>';return;}
+  var now=new Date();
+  g.innerHTML=D.impf.map(function(i){
+    var ok=!i.naechste_auffrischung||new Date(i.naechste_auffrischung)>now;
+    var bald=i.naechste_auffrischung&&Math.ceil((new Date(i.naechste_auffrischung)-now)/86400000)<=180;
+    var badge=!i.naechste_auffrischung?'<span class="badge badge-future">Einmalig</span>':
+      !ok?'<span class="badge badge-due">Überfällig</span>':
+      bald?'<span class="badge badge-warn">Bald fällig</span>':
+      '<span class="badge badge-ok">Aktuell</span>';
+    return '<div class="impf-card">'+
+      '<div style="font-size:13px;font-weight:500;margin-bottom:4px">'+esc(i.name)+'</div>'+
+      '<div style="font-size:11px;font-family:var(--mono);color:var(--muted)">'+(i.datum?'Letzte: '+fmt(i.datum):'—')+'</div>'+
+      (i.naechste_auffrischung?'<div style="font-size:11px;font-family:var(--mono);color:var(--muted)">Nächste: '+fmt(i.naechste_auffrischung)+'</div>':'')+
+      '<div style="margin-top:8px">'+badge+'</div>'+
+      '<div style="margin-top:8px;display:flex;gap:6px">'+
+        '<button class="btn btn-ghost btn-sm" onclick="editImpf(\''+i.id+'\')">✎</button>'+
+        '<button class="btn btn-danger btn-sm" onclick="delImpf(\''+i.id+'\')">✕</button>'+
+      '</div></div>';
+  }).join('');
+}
+
+// PRESETS
+var PRESETS = {
+  z1:{n:'Zahnarzt Check-up (1. Halbjahr)',k:'facharzt',a:'Zahnarzt',iv:6,er:30,no:'Zweimal jährlich — 1. Halbjahr'},
+  z2:{n:'Zahnarzt Check-up (2. Halbjahr)',k:'facharzt',a:'Zahnarzt',iv:6,er:30,no:'Zweimal jährlich — 2. Halbjahr'},
+  hk:{n:'Hautkrebsvorsorge',k:'vorsorge',a:'Hautarzt',iv:24,er:60,no:'Alle 2 Jahre'},
+  sd:{n:'Schilddrüse Check',k:'facharzt',a:'Internist',iv:36,er:60,no:'Alle 3 Jahre'},
+  ur:{n:'Urologie',k:'facharzt',a:'Urologe',iv:12,er:30,no:'1x jährlich'},
+  sp:{n:'Darmkrebs — Stuhlprobe (iFOBT)',k:'vorsorge',a:'Hausarzt',iv:12,er:30,no:'1x jährlich'},
+  ds:{n:'Darmspiegelung (Koloskopie)',k:'vorsorge',a:'Gastroenterologie',iv:120,er:180,no:'Ab 50 alle 10 Jahre'}
+};
+function applyRegelPreset() {
+  var k=document.getElementById('r-preset').value; if(!k)return;
+  var p=PRESETS[k]; if(!p)return;
+  document.getElementById('r-name').value=p.n;
+  document.getElementById('r-kat').value=p.k;
+  document.getElementById('r-arzt').value=p.a;
+  document.getElementById('r-intervall').value=p.iv;
+  document.getElementById('r-erinnerung').value=p.er;
+  document.getElementById('r-notiz').value=p.no;
+}
+
+// CRUD REGELTERMINE
+function openAddRegel() {
+  document.getElementById('modal-regel-title').textContent='Neuer Regeltermin';
+  document.getElementById('r-id').value='';
+  document.getElementById('r-preset').value='';
+  document.getElementById('r-name').value='';
+  document.getElementById('r-kat').value='facharzt';
+  document.getElementById('r-arzt').value='';
+  document.getElementById('r-intervall').value='12';
+  document.getElementById('r-erinnerung').value='30';
+  document.getElementById('r-notiz').value='';
+  document.getElementById('r-abjahr').value='';
+  document.getElementById('modal-regel').classList.add('open');
+}
+function editRegel(id) {
+  var r=D.regel.find(function(x){return x.id===id;}); if(!r)return;
+  document.getElementById('modal-regel-title').textContent='Regeltermin bearbeiten';
+  document.getElementById('r-id').value=r.id;
+  document.getElementById('r-preset').value='';
+  document.getElementById('r-name').value=r.name||'';
+  document.getElementById('r-kat').value=r.kategorie||'facharzt';
+  document.getElementById('r-arzt').value=r.arzt||'';
+  document.getElementById('r-intervall').value=r.intervall_monate!=null?r.intervall_monate:12;
+  document.getElementById('r-erinnerung').value=r.erinnerung_tage!=null?r.erinnerung_tage:30;
+  document.getElementById('r-notiz').value=r.notiz||'';
+  document.getElementById('r-abjahr').value=r.ab_jahr||'';
+  document.getElementById('modal-regel').classList.add('open');
+}
+async function saveRegel() {
+  var name=document.getElementById('r-name').value.trim();
+  if(!name){toast('Bezeichnung fehlt','err');return;}
+  var abJahr=parseInt(document.getElementById('r-abjahr').value)||null;
+  var payload={name:name,kategorie:document.getElementById('r-kat').value,arzt:document.getElementById('r-arzt').value.trim()||null,
+    intervall_monate:parseInt(document.getElementById('r-intervall').value)||12,
+    erinnerung_tage:parseInt(document.getElementById('r-erinnerung').value)||30,
+    ab_jahr:abJahr,
+    notiz:document.getElementById('r-notiz').value.trim()||null};
+  var id=document.getElementById('r-id').value;
+  try {
+    if(id) await dbPatch('vt_regeltermine',id,payload);
+    else await dbPost('vt_regeltermine',payload);
+    closeModal('modal-regel'); toast(id?'Aktualisiert':'Gespeichert','ok'); await refreshAll();
+  } catch(e){toast('Fehler: '+e.message,'err');}
+}
+async function delRegel(id) {
+  if(!confirm('Regeltermin löschen?'))return;
+  try{await dbDel('vt_regeltermine',id);toast('Gelöscht','ok');await refreshAll();}catch(e){toast('Fehler: '+e.message,'err');}
+}
+
+// CRUD IST-TERMINE
+function fillIstDropdown() {
+  var sel=document.getElementById('i-regel');
+  sel.innerHTML='<option value="">— Frei eingeben —</option>';
+  D.regel.forEach(function(r){
+    var o=document.createElement('option'); o.value=r.name; o.textContent=r.name; sel.appendChild(o);
+  });
+}
+function openAddIst() {
+  fillIstDropdown();
+  document.getElementById('modal-ist-title').textContent='Termin eintragen';
+  document.getElementById('i-id').value='';
+  document.getElementById('i-regel').value='';
+  document.getElementById('i-name').value='';
+  document.getElementById('i-datum').value='';
+  document.getElementById('i-arzt').value='';
+  document.getElementById('i-notiz').value='';
+  document.getElementById('modal-ist').classList.add('open');
+}
+function openAddIstFor(regelId) {
+  var r=D.regel.find(function(x){return x.id===regelId;}); if(!r)return;
+  fillIstDropdown();
+  document.getElementById('modal-ist-title').textContent='Termin eintragen';
+  document.getElementById('i-id').value='';
+  document.getElementById('i-regel').value=r.name;
+  document.getElementById('i-name').value=r.name;
+  document.getElementById('i-datum').value='';
+  document.getElementById('i-arzt').value=r.arzt||'';
+  document.getElementById('i-notiz').value='';
+  document.getElementById('modal-ist').classList.add('open');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('i-regel').addEventListener('change', function() {
+    var v=this.value; if(v) document.getElementById('i-name').value=v;
+  });
+});
+function editIst(btn) {
+  var id=btn.dataset?btn.dataset.id:btn;
+  var i=D.ist.find(function(x){return x.id===id;}); if(!i)return;
+  fillIstDropdown();
+  document.getElementById('modal-ist-title').textContent='Termin bearbeiten';
+  document.getElementById('i-id').value=i.id;
+  document.getElementById('i-regel').value=i.name||'';
+  document.getElementById('i-name').value=i.name||'';
+  document.getElementById('i-datum').value=i.datum||'';
+  document.getElementById('i-arzt').value=i.arzt||'';
+  document.getElementById('i-notiz').value=i.notiz||'';
+  document.getElementById('modal-ist').classList.add('open');
+}
+async function saveIst() {
+  var name=document.getElementById('i-name').value.trim();
+  var datum=document.getElementById('i-datum').value;
+  if(!name||!datum){toast('Name und Datum erforderlich','err');return;}
+  var payload={name:name,datum:datum,arzt:document.getElementById('i-arzt').value.trim()||null,notiz:document.getElementById('i-notiz').value.trim()||null};
+  var id=document.getElementById('i-id').value;
+  try {
+    if(id) await dbPatch('vt_isttermine',id,payload);
+    else await dbPost('vt_isttermine',payload);
+    closeModal('modal-ist'); toast(id?'Aktualisiert':'Termin gespeichert','ok'); await refreshAll();
+  } catch(e){toast('Fehler: '+e.message,'err');}
+}
+async function delIst(btn) {
+  var id=btn.dataset?btn.dataset.id:btn;
+  if(!confirm('Termin löschen?'))return;
+  try{await dbDel('vt_isttermine',id);toast('Gelöscht','ok');await refreshAll();}catch(e){toast('Fehler: '+e.message,'err');}
+}
+
+async function toggleAbgehakt(btn, currentlyDone) {
+  var id = btn.closest('tr').querySelector('[data-id]').dataset.id;
+  var isDone = (currentlyDone===true||currentlyDone==='true');
+  try {
+    await dbPatch('vt_isttermine', id, {abgehakt:!isDone});
+    await refreshAll();
+  } catch(e) { toast('Fehler: '+e.message,'err'); }
+}
+
+// CRUD IMPFUNGEN
+function autoImpfNaechste() {
+  var d=document.getElementById('ii-datum').value;
+  var iv=parseInt(document.getElementById('ii-iv').value)||0;
+  var nf=document.getElementById('ii-naechste');
+  if(d&&iv>0&&!nf.value) nf.value=addMonths(d,iv*12);
+}
+function openAddImpf() {
+  document.getElementById('modal-impf-title').textContent='Impfung eintragen';
+  document.getElementById('ii-id').value='';
+  document.getElementById('ii-name').value='';
+  document.getElementById('ii-datum').value='';
+  document.getElementById('ii-naechste').value='';
+  document.getElementById('ii-iv').value='10';
+  document.getElementById('ii-notiz').value='';
+  document.getElementById('modal-impf').classList.add('open');
+}
+function editImpf(id) {
+  var i=D.impf.find(function(x){return x.id===id;}); if(!i)return;
+  document.getElementById('modal-impf-title').textContent='Impfung bearbeiten';
+  document.getElementById('ii-id').value=i.id;
+  document.getElementById('ii-name').value=i.name||'';
+  document.getElementById('ii-datum').value=i.datum||'';
+  document.getElementById('ii-naechste').value=i.naechste_auffrischung||'';
+  document.getElementById('ii-iv').value=i.intervall_jahre!=null?i.intervall_jahre:10;
+  document.getElementById('ii-notiz').value=i.notiz||'';
+  document.getElementById('modal-impf').classList.add('open');
+}
+async function saveImpf() {
+  var name=document.getElementById('ii-name').value.trim();
+  if(!name){toast('Name fehlt','err');return;}
+  var datum=document.getElementById('ii-datum').value||null;
+  var iv=parseInt(document.getElementById('ii-iv').value)||0;
+  var naechste=document.getElementById('ii-naechste').value||null;
+  if(datum&&iv>0&&!naechste) naechste=addMonths(datum,iv*12);
+  var payload={name:name,datum:datum,naechste_auffrischung:naechste,intervall_jahre:iv,notiz:document.getElementById('ii-notiz').value.trim()||null};
+  var id=document.getElementById('ii-id').value;
+  try {
+    if(id) await dbPatch('vt_impfungen',id,payload);
+    else await dbPost('vt_impfungen',payload);
+    closeModal('modal-impf'); toast(id?'Aktualisiert':'Gespeichert','ok'); await refreshAll();
+  } catch(e){toast('Fehler: '+e.message,'err');}
+}
+async function delImpf(id) {
+  if(!confirm('Impfung löschen?'))return;
+  try{await dbDel('vt_impfungen',id);toast('Gelöscht','ok');await refreshAll();}catch(e){toast('Fehler: '+e.message,'err');}
+}
+
+// UI
+function showTab(name) {
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('tab-btn-'+name).classList.add('active');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openSettings() {
+  document.getElementById('s-url').value=SB_URL;
+  document.getElementById('s-key').value=SB_KEY;
+  document.getElementById('modal-settings').classList.add('open');
+}
+function saveSettings() {
+  var u=document.getElementById('s-url').value.trim().replace(/\/$/,'');
+  var k=document.getElementById('s-key').value.trim();
+  if(!u||!k){toast('Felder ausfüllen','err');return;}
+  saveCfg(u,k); closeModal('modal-settings'); toast('Gespeichert','ok'); refreshAll();
+}
+document.querySelectorAll('.modal-overlay').forEach(function(m){
+  m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});
+});
+
+loadCfg();
+refreshAll();
+</script>
+</body>
+</html>
