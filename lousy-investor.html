@@ -295,7 +295,7 @@
     <div class="kpi"><div class="kpi-label">Div. eingegangen</div><div class="kpi-value gold" id="kpi-received">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="kpi-received-year"></div></div>
     <div class="kpi"><div class="kpi-label">Ø Monatlich</div><div class="kpi-value" id="kpi-monthly">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub">nach Steuern</div></div>
     <div class="kpi"><div class="kpi-label" id="kpi-depot-fc-label">Depotwert 2047</div><div class="kpi-value gold" id="kpi-depot-fc">—</div><div class="kpi-denom">EUR</div></div>
-    <div class="kpi"><div class="kpi-label">Divid.-Rendite YoC</div><div class="kpi-value" id="kpi-yield">—</div><div class="kpi-sub" id="kpi-yield-fc" style="font-size:10px;color:var(--gold);">—</div></div>
+    <div class="kpi"><div class="kpi-label">Divid.-Rendite YoC</div><div class="kpi-value" id="kpi-yield">—</div></div>
   </div>
 
 
@@ -1692,12 +1692,6 @@ function render(){
   const netMonthly = annualDiv * (1 - fcTax/100) / 12;
   document.getElementById('kpi-monthly').textContent  = fmtEur0(netMonthly,true);
   document.getElementById('kpi-yield').textContent    = depotYield>0?fmtPct(depotYield):'—';
-  // YoC Prognose: projected annual div at target year / cost basis
-  const fcYears   = Math.max(0, fcYear - new Date().getFullYear());
-  const annualDivFc = annualDiv * Math.pow(1 + fcYieldGrowth/100, fcYears);
-  const yocFc     = costValue>0?(annualDivFc/costValue)*100:0;
-  const yocFcEl   = document.getElementById('kpi-yield-fc');
-  if(yocFcEl) yocFcEl.textContent = yocFc>0?`YoC ${fcYear}: ${fmtPct(yocFc)}`:'—';
 
   updateGauge(annualDiv, forecast, fcYear, GOAL, fcTax/100, bnMode);
 
