@@ -280,7 +280,7 @@
     <button class="tab-btn" id="tabnav-krypto" onclick="showTab('krypto')">Krypto</button>
     <button class="tab-btn" id="tabnav-metalle" onclick="showTab('metalle')">Edelmetalle</button>
     <button class="tab-btn" id="tabnav-ib" onclick="showTab('ib')">IB Depot</button>
-    <button class="tab-btn" id="tabnav-watchlist" onclick="showTab('watchlist')">Watchlist</button>
+    <button class="tab-btn" id="tabnav-playbook" onclick="showTab('playbook')">📋 Playbook</button>
   </div>
 
   <!-- Tab: Dividenden-Depot -->
@@ -295,7 +295,7 @@
     <div class="kpi"><div class="kpi-label">Div. eingegangen</div><div class="kpi-value gold" id="kpi-received">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub" id="kpi-received-year"></div></div>
     <div class="kpi"><div class="kpi-label">Ø Monatlich</div><div class="kpi-value" id="kpi-monthly">—</div><div class="kpi-denom">EUR</div><div class="kpi-sub">nach Steuern</div></div>
     <div class="kpi"><div class="kpi-label" id="kpi-depot-fc-label">Depotwert 2047</div><div class="kpi-value gold" id="kpi-depot-fc">—</div><div class="kpi-denom">EUR</div></div>
-    <div class="kpi"><div class="kpi-label">Depot-Rendite</div><div class="kpi-value" id="kpi-yield">—</div></div>
+    <div class="kpi"><div class="kpi-label">Divid.-Rendite YoC</div><div class="kpi-value" id="kpi-yield">—</div><div class="kpi-sub" id="kpi-yield-fc" style="font-size:10px;color:var(--gold);">—</div></div>
   </div>
 
 
@@ -534,216 +534,342 @@
 </div>
 
 
-<!-- ═══════════════════ TAB: WATCHLIST ═══════════════════ -->
-<div id="tab-watchlist" class="tab-content shell" style="margin-top:-4rem;padding-top:0;">
-  <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
-    <button class="btn-primary" style="width:auto;padding:6px 16px;margin:0;font-size:12px;" onclick="loadWatchlistPrices()">↻ Kurse laden</button>
-    <button class="btn-sec" style="width:auto;padding:6px 12px;margin:0;font-size:12px;" onclick="saveWatchlist()">💾 Speichern</button>
-    <span id="wl-status" style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;"></span>
-  </div>
-  <!-- Dividenden-Werte -->
-  <div class="card" style="margin-bottom:12px;padding:0;">
-    <div class="card-title" style="padding:10px 16px;cursor:pointer;justify-content:space-between;" onclick="toggleWlSection('div')">
-      <span>Dividenden-Werte</span>
-      <span id="wl-arrow-div" style="font-size:11px;color:var(--text3);transition:transform .2s;">▲</span>
+
+<!-- ═══════════════════ TAB: PLAYBOOK ═══════════════════ -->
+<div id="tab-playbook" class="tab-content shell" style="margin-top:-4rem;padding-top:0;">
+  <div>
+
+    <div style="background:var(--bg2);border-radius:12px;padding:28px 32px;margin-bottom:20px;border-left:4px solid var(--accent);">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;margin:0 0 8px 0;">Das Investor-Psychologie Playbook</h2>
+      <p style="color:var(--text3);font-size:13px;margin:0;">Warum 90% dieses Spiels im Kopf entschieden werden</p>
+      <blockquote style="border-left:3px solid var(--accent);padding-left:16px;margin:16px 0 0 0;color:var(--text2);font-style:italic;font-size:13px;">
+        „Der Aktienmarkt war noch nie ein Intelligenzspiel. Er war immer ein psychologisches Spiel."
+      </blockquote>
     </div>
-    <div id="wl-section-div">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:0.5px solid var(--border2);">
-        <div style="border-right:0.5px solid var(--border2)padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-div-0">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-div-0"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-div-0" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('div',0)">
-            <button class="action-btn" onclick="wlAddTicker('div',0)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+
+    <!-- Intro -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Das Grundprinzip</div>
+      <p style="font-size:13px;line-height:1.7;color:var(--text2);">Hier ist, was niemand in dieser Branche sagen will: Der Grund, warum ich Geld verliere, hat nichts mit der Aktienauswahl zu tun. Nichts mit dem Unternehmen, das ich gekauft habe. Nichts mit Timing, Makroanalyse, Chartmustern oder dem, was die Fed an einem Dienstag gesagt hat.</p>
+      <p style="font-size:13px;line-height:1.7;color:var(--text2);">Ich bin das Problem. Nicht weil ich dumm wäre – sondern weil mein Gehirn darauf ausgelegt ist, mein Portfolio zu zerstören. Die Evolution hat Millionen von Jahren damit verbracht, mich zu programmieren, vor Gefahren zu fliehen und glänzende Objekte zu jagen. Diese Instinkte hielten meine Vorfahren am Leben. An der Börse werden dieselben Instinkte mich ruinieren.</p>
+      <p style="font-size:13px;line-height:1.7;color:var(--text2);">Der Anleger, der über 5 bis 10 Jahre gewinnt, ist wahrscheinlich nicht der lauteste. Nicht derjenige, der tiefe Analysen in sozialen Medien postet. Es ist meistens die stille Person, die mit Unsicherheit leben kann, ohne etwas Dummes zu tun. <strong style="color:var(--text1);">In meiner Schule schlägt Disziplin Intelligenz. Jedes Mal.</strong></p>
+    </div>
+
+    <!-- Die 3 Emotionen -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Die 3 Emotionen des Investierens</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:4px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border-top:3px solid var(--red);">
+          <div style="font-weight:700;color:var(--red);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">😨 Angst</div>
+          <p style="font-size:11px;line-height:1.6;color:var(--text2);margin:0;">Angst treibt Panikverkäufe an. Sie ist der Grund, warum mein Portfolio 30% fällt und ich genau im schlechtesten Moment auf den Verkaufsknopf drücke. Der S&P 500 ist in 95% aller 10-Jahres-Perioden positiv. 100% der 20-Jahres-Perioden. <strong>Angst ist der Grund, warum der durchschnittliche Anleger ~3% pro Jahr verdient, während der Markt 10% liefert.</strong></p>
         </div>
-        <div style="border-right:0.5px solid var(--border2)padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-div-1">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-div-1"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-div-1" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('div',1)">
-            <button class="action-btn" onclick="wlAddTicker('div',1)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border-top:3px solid var(--gold);">
+          <div style="font-weight:700;color:var(--gold);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">💰 Gier</div>
+          <p style="font-size:11px;line-height:1.6;color:var(--text2);margin:0;">Gier ist gefährlicher als Angst. Angst lässt mich am Tiefpunkt verkaufen. Gier lässt mich am Höchststand kaufen. Gier ist das, was mich dazu bringt, mein DCA-System aufzugeben und 50.000 € in eine Aktie zu investieren, die bereits 200% gestiegen ist – weil ich jemanden in Social Media seine Gewinne posten gesehen habe.</p>
         </div>
-        <div style="border-right:padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-div-2">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-div-2"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-div-2" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('div',2)">
-            <button class="action-btn" onclick="wlAddTicker('div',2)" style="padding:2px 8px;font-size:12px;">+</button>
+        <div style="background:var(--bg3);border-radius:8px;padding:14px;border-top:3px solid var(--teal);">
+          <div style="font-weight:700;color:var(--teal);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">⏳ Geduld</div>
+          <p style="font-size:11px;line-height:1.6;color:var(--text2);margin:0;">Die unterschätzte Superkraft. Niemand postet Geduld in sozialen Medien. Aber das ist, was gewinnt. Die Formel: mehr Geld sparen, bessere Unternehmen kaufen, länger investiert bleiben. <strong>Charlie Munger: „Das große Geld liegt nicht im Kaufen oder Verkaufen. Es liegt im Warten."</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 Biases -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Die 10 Biases, die mich blind berauben</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">1. Verlustaversion</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">100 € zu verlieren schmerzt doppelt so stark, wie 100 € zu gewinnen gut fühlt. Das ist hardwired in jeden Menschen. Fix: DCA-System, das Verkaufsentscheidungen vollständig aus dem emotionalen Gehirn entfernt.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">2. Dunning-Kruger-Effekt</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Der Neuling, der in einem boomenden Markt Gewinne macht, hält sich für den nächsten Buffett. Ich habe noch keinen 50%-Einbruch erlebt. Das verändert alles. Wenn ich noch nicht vor 2023 investiert war, bin ich ein Rookie.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">3. Anchoring / Verankerung</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">„Ich kann nicht bei 80 € verkaufen, weil sie bei 125 € waren." Die Aktie weiß nicht, was ich dafür gezahlt habe. Entweder das Geschäft ist gut und ich halte, oder es ist kaputt und ich verkaufe. Der Kaufpreis ist irrelevant.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">4. Recency Bias / Aktualitätsverzerrung</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Weil Aktien zwei Jahre gestiegen sind, fühlt sich das permanent an. Wenn sie drei Monate fallen, fühlt es sich wie nie enden an. Mein Gehirn nimmt die jüngste Erfahrung und projiziert sie ewig in die Zukunft – und liegt fast immer falsch.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">5. Negativitätsbias</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich habe 9 grüne Positionen und 1 rote. Wohin wandert mein Blick? Zur roten. Immer. Diese Fixierung treibt schlechte Entscheidungen. In einem diversifizierten Portfolio werde ich definitionsgemäß immer Aktien haben, die nicht laufen.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">6. Bestätigungsfehler</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich liebe eine Aktie, also lese ich nur bullische Analysen. Fix: Für jede Aktie, die ich besitze, suche ich aktiv nach dem Bären-Szenario. Wenn meine These es überlebt, wird meine Überzeugung stärker. Wenn nicht, habe ich gerade viel Geld gespart.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">7. Herdenmentalität</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Wann war es am schlimmsten zu verkaufen? März 2020. Wann hat buchstäblich jeder verkauft? März 2020. Die Herde stürzt immer gemeinsam vom Abgrund. Wenn alle kaufen, ist das Risiko am höchsten. Wenn alle verkaufen, ist die Chance am größten.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">8. Überconfidence</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">„Ich kenne diese Aktie besser als alle. Es kann nicht fallen." Doch, das kann es. Sogar sichere Aktien können auf Null gehen. Überzeugung ist gut. Arroganz ist fatal. Überzeugung sagt: „Ich bin auf den Nachteil vorbereitet." Arroganz sagt: „Es gibt keinen Nachteil."</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">9. Binäres Denken</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Überzeugung und Absicherung schließen sich NICHT gegenseitig aus. Ich kann tief an eine Aktie glauben UND 20% vom Tisch nehmen, weil ich ein verantwortungsvoller Erwachsener bin, der Risiken managt. Beide Dinge können gleichzeitig wahr sein.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text1);margin-bottom:4px;">10. Faulendes Denken</div>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich höre ein Ticker-Symbol von jemandem auf YouTube und kaufe, ohne einen einzigen Jahresbericht gelesen zu haben. Das ist kein Investieren. Das ist Glücksspiel mit extra Schritten. Fix: Ich lese den Jahresbericht. Wenn ich nicht in einem Satz erklären kann, warum ich eine Aktie besitze, sollte ich sie nicht besitzen.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOMO System -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Das FOMO-Eliminierungssystem (7 Schritte)</div>
+      <div style="counter-reset:fomo-step;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">1</span>
+            <div><strong style="font-size:11px;">Ich definiere mein Ziel neu.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Mein Ziel ist „kontinuierliche Verbesserung" im Laufe der Zeit – nicht „Gewinne diesen Monat maximieren". Sobald ich das Ziel neu definiere, verschwindet 80% des FOMO.</p></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">2</span>
+            <div><strong style="font-size:11px;">Ich schreibe meine Top-3-Ängste auf.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Auf echtem Papier. Stift. Kein Telefonnotiz. Das Schreiben schaltet mein Gehirn vom emotionalen in den logischen Modus.</p></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">3</span>
+            <div><strong style="font-size:11px;">Visualisierung – der mentale Flugsimulator.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Ich simuliere das schlimmste FOMO-Ereignis, das ich mir vorstellen kann. Ich sitze mit diesem Gefühl. Beruhige mich bewusst. 100-200 Mal. Das ist Pawlowsche Konditionierung.</p></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">4</span>
+            <div><strong style="font-size:11px;">Selbstmitgefühl, nicht Selbstbestrafung.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Wenn ich einen Gewinner verpasse, sage ich nicht „Ich bin ein Idiot." Ich sage: „Ich folgte meinem System – und das System schützt mich auch vor den 50 Verlierern, die ich ebenfalls nicht kaufte."</p></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">5</span>
+            <div><strong style="font-size:11px;">Ich nutze den Hass als Motivator.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Ich hasse das Gefühl, das ich im FOMO-Zustand habe. Diese Abneigung kanalisiere ich in Disziplin: „Ich werde mich nie wieder so fühlen, weil ich meinem System folge."</p></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">6</span>
+            <div><strong style="font-size:11px;">Ich diversifiziere meine Identität.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Wenn 100% meiner Identität „Börseninvestor" ist, ist jede Marktbewegung ein persönlicher Angriff. Familie, Karriere, Gesundheit, Hobbys. Die Börse ist ein Teil meines Lebens, nicht mein gesamtes Leben.</p></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:12px;display:flex;gap:10px;grid-column:1/-1;">
+            <span style="font-size:18px;font-weight:700;color:var(--accent);min-width:24px;">7</span>
+            <div><strong style="font-size:11px;">Ich halte mein System einfach.</strong><p style="font-size:11px;color:var(--text2);margin:4px 0 0 0;">Komplexe Systeme schaffen mehr Entscheidungspunkte. Mehr Entscheidungspunkte schaffen mehr Möglichkeiten für FOMO. DCA an einem festen Datum, fester Betrag, feste Regeln. Fertig.</p></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- Wachstumswerte -->
-  <div class="card" style="margin-bottom:12px;padding:0;">
-    <div class="card-title" style="padding:10px 16px;cursor:pointer;justify-content:space-between;" onclick="toggleWlSection('gro')">
-      <span>Wachstumswerte</span>
-      <span id="wl-arrow-gro" style="font-size:11px;color:var(--text3);transition:transform .2s;">▲</span>
-    </div>
-    <div id="wl-section-gro">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:0.5px solid var(--border2);">
-        <div style="border-right:0.5px solid var(--border2)padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-gro-0">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-gro-0"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-gro-0" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('gro',0)">
-            <button class="action-btn" onclick="wlAddTicker('gro',0)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+
+    <!-- Chill Protocol -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Das Chill-Protokoll: Was ich tue, wenn Märkte fallen</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-top:2px solid var(--accent);">
+          <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:6px;">SCHRITT 1</div>
+          <strong style="font-size:11px;">24h Pause vom Bildschirm</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">Laptop schließen. Trading-App löschen. Raus gehen. Ich bin nicht in der Lage, jetzt eine gute Entscheidung zu treffen. Niemand ist das.</p>
         </div>
-        <div style="border-right:0.5px solid var(--border2)padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-gro-1">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-gro-1"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-gro-1" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('gro',1)">
-            <button class="action-btn" onclick="wlAddTicker('gro',1)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-top:2px solid var(--accent);">
+          <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:6px;">SCHRITT 2</div>
+          <strong style="font-size:11px;">Thesis-Prüfung auf Papier</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">Meine ursprünglichen Investmentgründe vs. aktueller Geschäftszustand. Hat sich der Preis verändert oder das Geschäft? Wenn nur der Preis – kaufe ich mehr.</p>
         </div>
-        <div style="border-right:padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-gro-2">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-gro-2"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-gro-2" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('gro',2)">
-            <button class="action-btn" onclick="wlAddTicker('gro',2)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-top:2px solid var(--accent);">
+          <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:6px;">SCHRITT 3</div>
+          <strong style="font-size:11px;">Opportunistisch denken</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">Wenn Apple ein iPhone mit 30% Rabatt anbietet, kaufe ich zwei. Wenn meine Lieblingsaktie Anteile mit 30% Rabatt anbietet, denke ich genauso.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-top:2px solid var(--accent);">
+          <div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:6px;">SCHRITT 4</div>
+          <strong style="font-size:11px;">Übung für den nächsten Einbruch</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">Jeder Einbruch, den ich überlebe, macht den nächsten einfacher. Der erste 10%-Fall fühlt sich wie der Tod an. Der fünfte fühlt sich wie ein normaler Dienstag an.</p>
         </div>
       </div>
     </div>
-  </div>
-  <!-- ETF -->
-  <div class="card" style="margin-bottom:12px;padding:0;">
-    <div class="card-title" style="padding:10px 16px;cursor:pointer;justify-content:space-between;" onclick="toggleWlSection('etf')">
-      <span>ETF</span>
-      <span id="wl-arrow-etf" style="font-size:11px;color:var(--text3);transition:transform .2s;">▲</span>
-    </div>
-    <div id="wl-section-etf">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:0.5px solid var(--border2);">
-        <div style="border-right:0.5px solid var(--border2)padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-etf-0">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-etf-0"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-etf-0" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('etf',0)">
-            <button class="action-btn" onclick="wlAddTicker('etf',0)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+
+    <!-- Das Tote-Leute-Problem -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Das Tote-Menschen-Problem: Warum Systeme Talent schlagen</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <p style="font-size:13px;line-height:1.7;color:var(--text2);">Das unbequemste Datenpunkt in allen Investitionen: Tote Menschen übertreffen lebende Investoren. Fidelity und Vanguard haben das studiert. Portfolios mit null Aktivität über 5–10 Jahre waren die besten Performer. Nicht „unter den besten". Die absolut Besten.</p>
+          <p style="font-size:13px;line-height:1.7;color:var(--text2);">Die Lektion ist nicht „verkaufe nie". Die Lektion ist, dass meine Aktivität meistens das Problem ist, nicht die Lösung. Das Beste, was ich als Investor tun kann, ist meine Aktivität auf das absolute Minimum zu reduzieren.</p>
         </div>
-        <div style="border-right:0.5px solid var(--border2)padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-etf-1">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-etf-1"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-etf-1" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('etf',1)">
-            <button class="action-btn" onclick="wlAddTicker('etf',1)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
-        </div>
-        <div style="border-right:padding:8px;">
-          <table class="mod-table" style="width:100%;margin:0;" id="wl-table-etf-2">
-            <thead><tr>
-              <th style="width:25%">Ticker</th>
-              <th>Bezeichnung</th>
-              <th class="num" style="width:14%">Tag %</th>
-              <th class="num" style="width:14%">Woche %</th>
-              <th class="num" style="width:14%">Monat %</th>
-              <th style="width:20px"></th>
-            </tr></thead>
-            <tbody id="wl-tbody-etf-2"></tbody>
-          </table>
-          <div style="padding:4px 0;margin-top:4px;display:flex;gap:6px;">
-            <input id="wl-add-etf-2" type="text" placeholder="Ticker hinzufügen"
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text1);font-size:11px;padding:3px 6px;text-transform:uppercase;"
-              onkeydown="if(event.key==='Enter')wlAddTicker('etf',2)">
-            <button class="action-btn" onclick="wlAddTicker('etf',2)" style="padding:2px 8px;font-size:12px;">+</button>
-          </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:16px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:12px;text-transform:uppercase;">Meine Verfassung</div>
+          <p style="font-size:11px;color:var(--text2);margin:0 0 8px 0;">Ich habe ein System BEVOR die Panik beginnt. Es ist sehr schwer, ein System zu installieren, wenn die Märkte bereits turbulent sind. Der Zeitpunkt für Regeln ist, wenn alles ruhig und langweilig ist – nicht wenn das Haus brennt.</p>
+          <p style="font-size:11px;color:var(--text2);margin:0;">Ich schreibe alles auf. Mein Plan ist meine Verfassung. Wenn Panik oder Gier entsteht, schaue ich auf meine Verfassung. Ich verpflichte mein Gehirn vorab zu Handlungen in schwierigen Zeiten. Das ist das mächtigste Werkzeug in meinem Arsenal.</p>
         </div>
       </div>
     </div>
+
+    <!-- Die 17 Fehler -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Die 17 Fehler, die mich in den 90%-Verlierer-Club bringen</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Heißen Tipps nachjagen</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Jemand beim Grillen erzählte mir von einer Aktie. Das ist keine Recherche.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Überhandeln</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Millionärs-Portfolios handelten nur 8% der Vermögenswerte pro Jahr. Wenn ich 8% pro Monat handle, bin ich das Problem.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Panikverkäufe</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Markt fiel 10% → alles verkauft → Markt stieg 30% im nächsten Jahr. Diese Geschichte passiert bei jeder Korrektur millionenfach.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">FOMO-Impulskäufe</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Aktie stieg 40% diesen Monat. Ich kaufe am Höchststand. Sie fällt 25% im nächsten Monat.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Margin/Hebel verwenden</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Margin ist krebsartig für Portfolios. Ich leihe mir niemals Geld zum Investieren.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Verlierer aus Stolz halten</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Die These ist kaputt. Revenue sinkt. Aber ich verkaufe nicht, weil „es wird sich erholen". Ich gieße eine tote Pflanze.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Kurzfristigen Lärm beobachten</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Eine Schlagzeile über Zölle. Ein Tweet eines Politikers. Nichts davon spielt in einem 10-Jahres-Horizont eine Rolle.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Über-Diversifikation (100+ Aktien)</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Ich habe mich zu Tode diversifiziert – einen schlechteren Indexfonds mit höheren Kosten gebaut.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Unter-Diversifikation (1-2 Aktien)</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">100% in einer Aktie ist eine konzentrierte Wette, kein Portfolio.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Management blind vertrauen</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">CEOs sind Verkäufer. Sie verkaufen mir die Geschichte. Die Zahlen erzählen die Wahrheit. Ich lese den Jahresbericht.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Glück mit Können verwechseln</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Ich kaufte 2023 und alles stieg. Das ist kein Genie – das ist ein Bullenmarkt.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--red);font-size:14px;">✕</span>
+          <div><strong style="font-size:10px;color:var(--text1);">Keine Ausstiegsstrategie</strong><p style="font-size:10px;color:var(--text3);margin:2px 0 0 0;">Ich kaufe eine Aktie ohne zu wissen, was mich verkaufen lässt. Ich schreibe Verkaufsbedingungen VOR dem Kauf.</p></div>
+        </div>
+        <div style="background:var(--bg3);border-radius:5px;padding:10px;display:flex;gap:8px;align-items:flex-start;grid-column:1/-1;">
+          <span style="color:var(--teal);font-size:14px;">→</span>
+          <div><strong style="font-size:10px;color:var(--teal);">Alle 17 haben dieselbe Grundursache: kein System, keine Disziplin, keine Konsequenz, keine Regeln. Wenn ich das System repariere, reparieren sich die meisten von selbst.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schnellreferenz -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Mein psychologisches Überlebenskit – Schnellreferenz</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-left:3px solid var(--red);">
+          <strong style="font-size:11px;color:var(--red);">Wenn ich Angst spüre:</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">24h Pause. Thesis aufschreiben. Frage: „Hat sich das Geschäft verändert, oder nur der Kurs?" Wenn nur der Kurs – kaufe mehr.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-left:3px solid var(--gold);">
+          <strong style="font-size:11px;color:var(--gold);">Wenn ich Gier spüre:</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">DCA auf halbe Geschwindigkeit bei allem, das in 30 Tagen um 20%+ gestiegen ist. NIEMALS Pauschalinvestition in eine Aktie, die gerade gelaufen ist.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-left:3px solid var(--accent);">
+          <strong style="font-size:11px;color:var(--accent);">Wenn ich FOMO spüre:</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">7-Schritte-FOMO-Eliminierung. Ich muss nicht jeden Gewinner erwischen. Ich muss jeden Verlierer vermeiden.</p>
+        </div>
+        <div style="background:var(--bg3);border-radius:6px;padding:12px;border-left:3px solid var(--teal);">
+          <strong style="font-size:11px;color:var(--teal);">Wenn Medien „Crash" schreien:</strong>
+          <p style="font-size:11px;color:var(--text2);margin:6px 0 0 0;">Crashes passieren bei euphorischer Stimmung, nicht bei ängstlicher. Wenn alle Angst haben, ist das Schlimmste wahrscheinlich vorbei.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schlüsselzahlen -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Zahlen, die ich verinnerlicht habe</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--teal);">95%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">S&P 500 positiv in 10-Jahres-Perioden</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--teal);">100%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">S&P 500 positiv in 20-Jahres-Perioden</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--gold);">10 Monate</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Durchschnittliche Dauer eines Bärenmarkts</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--teal);">5 Jahre</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Durchschnittliche Dauer eines Bullenmarkts (+114%)</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--red);">−50%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Rendite wenn ich die 10 besten Tage in 20 Jahren verpasse</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--red);">5%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Profi-Fondsmanager, die den S&P nach 15 Jahren schlagen</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--gold);">2×</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Verluste fühlen sich doppelt so schmerzhaft an wie Gewinne gut</div>
+        </div>
+        <div style="text-align:center;background:var(--bg3);border-radius:8px;padding:14px;">
+          <div style="font-size:24px;font-weight:700;color:var(--red);">−7%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;">Durchschnittliche Renditelücke Investor vs. Markt pro Jahr</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meine Verfassung -->
+    <div style="background:var(--bg2);border-radius:12px;padding:24px;border:1px solid var(--border2);margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;">📋 Meine Investoren-Verfassung</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich investiere jeden Monat denselben Betrag am selben Tag – unabhängig davon, was passiert.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich verkaufe eine Aktie nicht, weil der Kurs gestiegen oder gefallen ist. Ich verkaufe nur, wenn sich das Geschäft fundamental verschlechtert hat.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich jage keine heißen Tipps, Meme-Aktien oder Social-Media-Hype.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich überprüfe mein Portfolio einmal pro Woche, an einem festen Tag – und das war's.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Vor jeder neuen Aktie schaue ich zuerst auf die Fundamentaldaten. Egal wie aufregend die Geschichte klingt.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Ich gönne mir 24h vor jeder diskretionären Investitionsentscheidung.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Korrekturen sind Kaufgelegenheiten, keine Notfälle. Das Geld wird im schlechten Markt gemacht, nicht im guten.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <span style="color:var(--teal);font-size:13px;margin-top:1px;">✓</span>
+          <p style="font-size:11px;color:var(--text2);margin:0;line-height:1.5;">Mehr sparen, klüger investieren, länger warten. Diese Formel ist ungeschlagen.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final -->
+    <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border-radius:12px;padding:24px;border:1px solid var(--border2);margin-bottom:20px;text-align:center;">
+      <p style="font-size:15px;font-weight:600;color:var(--text1);margin:0 0 8px 0;">Das ist das Spiel. Es geht nicht darum, die klügste Person im Raum zu sein.</p>
+      <p style="font-size:13px;color:var(--text2);margin:0 0 16px 0;">Es geht darum, die disziplinierteste Person im Raum zu sein.</p>
+      <div style="background:var(--accent);color:var(--bg1);border-radius:8px;padding:12px 20px;display:inline-block;font-weight:700;font-size:14px;letter-spacing:.03em;">
+        In meiner Schule schlägt Disziplin Intelligenz. Jedes Mal.
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1090,7 +1216,7 @@ async function sbPatch(t,f,b){
   if(!r.ok) throw new Error(await r.text()); return r.json();
 }
 async function sbDelete(t,f){
-  const r=await fetch(`${SB_URL}/rest/v1/${t}?${f}`,{method:'DELETE',headers:sbH()});
+  const r=await fetch(`${SB_URL}/rest/v1/${t}?${f}`,{method:'DELETE',headers:sbH({'Prefer':'return=minimal'})});
   if(!r.ok) throw new Error(await r.text());
 }
 async function sbPut(t,id,b){
@@ -1534,7 +1660,7 @@ function render(){
   const costValue  = Math.round(positions.reduce((s,p)=>s+Number(p.shares)*Number(p.purchase_price||0),0));
   const diffValue  = depotValue - costValue;
   const diffPct    = costValue>0?(diffValue/costValue)*100:0;
-  const depotYield = depotValue>0?(annualDiv/depotValue)*100:0;
+  const depotYield = costValue>0?(annualDiv/costValue)*100:0; // YoC = annual div / cost basis
   const curYear    = new Date().getFullYear();
   const received   = Math.round(payments.filter(p=>p.year===curYear).reduce((s,p)=>s+Number(p.amount),0));
 
@@ -1566,6 +1692,12 @@ function render(){
   const netMonthly = annualDiv * (1 - fcTax/100) / 12;
   document.getElementById('kpi-monthly').textContent  = fmtEur0(netMonthly,true);
   document.getElementById('kpi-yield').textContent    = depotYield>0?fmtPct(depotYield):'—';
+  // YoC Prognose: projected annual div at target year / cost basis
+  const fcYears   = Math.max(0, fcYear - new Date().getFullYear());
+  const annualDivFc = annualDiv * Math.pow(1 + fcYieldGrowth/100, fcYears);
+  const yocFc     = costValue>0?(annualDivFc/costValue)*100:0;
+  const yocFcEl   = document.getElementById('kpi-yield-fc');
+  if(yocFcEl) yocFcEl.textContent = yocFc>0?`YoC ${fcYear}: ${fmtPct(yocFc)}`:'—';
 
   updateGauge(annualDiv, forecast, fcYear, GOAL, fcTax/100, bnMode);
 
@@ -1860,7 +1992,7 @@ async function init(){
 init();
 
 // ── Tab Navigation ─────────────────────────────────────────────────────
-const TABS = ['uebersicht','dividenden','etf','krypto','metalle','ib','watchlist'];
+const TABS = ['uebersicht','dividenden','etf','krypto','metalle','ib','playbook'];
 const METALLE_LOGO = 'data:image/png;base64,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';
 const IB_LOGO = 'data:image/png;base64,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';
 const KRYPTO_LOGO = 'data:image/png;base64,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';
@@ -1905,7 +2037,7 @@ function showTab(name){
     logoImg.src = IB_LOGO;
     logoImg.style.borderRadius = '8px';
     logoWrap.style.display = 'flex';
-  } else if(name==='watchlist'||name==='uebersicht'){
+  } else if(name==='playbook'||name==='uebersicht'){
     const clown = document.getElementById('main-clown');
     logoImg.style.display = 'none';
     if(clown){ clown.style.display='inline'; }
@@ -1918,7 +2050,6 @@ function showTab(name){
   if(name==='metalle')  loadMetals();
   if(name==='ib')         loadIb();
   if(name==='uebersicht') loadOverview();
-  if(name==='watchlist')   loadWatchlist();
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -2081,7 +2212,7 @@ function openEtfEdit(id){
 
 async function deleteEtf(id){
   if(!confirm('Position löschen?')) return;
-  await sbDelete('etf_positions',id); loadEtf();
+  try{ await sbDelete('etf_positions',`id=eq.${id}`); showToast('Gelöscht','ok'); loadEtf(); }catch(e){ showToast('Fehler: '+e.message,'err'); }
 }
 
 // ══════════════════════ KRYPTO ══════════════════════════════════════════
@@ -2424,7 +2555,7 @@ async function saveMetal(){
 }
 async function deleteMetal(id){
   if(!confirm('Position löschen?')) return;
-  await sbDelete('metal_positions',id); loadMetals();
+  try{ await sbDelete('metal_positions',`id=eq.${id}`); showToast('Gelöscht','ok'); loadMetals(); }catch(e){ showToast('Fehler: '+e.message,'err'); }
 }
 
 // ══════════════════════ ÜBERSICHT ══════════════════════════════════════
@@ -2712,7 +2843,7 @@ async function saveIb(){
 }
 async function deleteIb(id){
   if(!confirm('Position löschen?')) return;
-  await sbDelete('ib_positions',id); loadIb();
+  try{ await sbDelete('ib_positions',`id=eq.${id}`); showToast('Gelöscht','ok'); loadIb(); }catch(e){ showToast('Fehler: '+e.message,'err'); }
 }
 
 
@@ -3019,161 +3150,7 @@ function updateIBForecast(){
 }
 
 
-// ── Watchlist ─────────────────────────────────────────────────────────────
-const WL_SECTIONS = ['div','gro','etf'];
-const WL_COLS = 3;
-let wlData  = {div:[[],[],[]], gro:[[],[],[]], etf:[[],[],[]]};
-let wlNames = {}; // ticker → name, fetched once on add, persisted to Supabase
-let wlPct   = {}; // ticker → {day, week, month}
 
-function toggleWlSection(sec){
-  const el = document.getElementById('wl-section-'+sec);
-  const arrow = document.getElementById('wl-arrow-'+sec);
-  if(!el) return;
-  const open = el.style.display !== 'none';
-  el.style.display = open ? 'none' : 'block';
-  if(arrow) arrow.style.transform = open ? 'rotate(180deg)' : '';
-}
-
-async function loadWatchlist(){
-  try{
-    const rows = await sbGet('depot_settings','key=in.(watchlist_v1,watchlist_names_v1)&select=key,value');
-    rows.forEach(r=>{
-      if(r.key==='watchlist_v1')      wlData  = JSON.parse(r.value);
-      if(r.key==='watchlist_names_v1') wlNames = JSON.parse(r.value);
-    });
-    WL_SECTIONS.forEach(s=>{ if(!wlData[s]) wlData[s]=[[],[],[]]; });
-  }catch(e){}
-  renderAllWlTables();
-}
-
-function renderAllWlTables(){
-  WL_SECTIONS.forEach(sec=>{
-    for(let c=0;c<WL_COLS;c++) renderWlTable(sec,c);
-  });
-}
-
-function pctCell(v){
-  if(v==null) return '<td class="num" style="color:var(--text3)">—</td>';
-  const col = v>=0?'var(--teal)':'var(--red)';
-  return `<td class="num" style="color:${col}">${v>=0?'+':''}${v.toFixed(1)}%</td>`;
-}
-
-function renderWlTable(sec, col){
-  const tbody = document.getElementById(`wl-tbody-${sec}-${col}`);
-  if(!tbody) return;
-  const tickers = wlData[sec]?.[col]||[];
-  if(!tickers.length){
-    tbody.innerHTML='<tr><td colspan="6" style="color:var(--text3);font-size:11px;padding:6px;">Leer</td></tr>';
-    return;
-  }
-  tbody.innerHTML = tickers.map((t,i)=>{
-    const name = wlNames[t]||'—';
-    const p    = wlPct[t]||{};
-    return `<tr>
-      <td><div class="ticker-text ticker-hover" style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--teal);cursor:pointer;"
-        onmouseenter="showFinviz(event,'${t}','${name.replace(/'/g,"\'")}')"
-        onmouseleave="hideFinviz()"
-        onclick="openFinviz('${t}',event)">${t}</div></td>
-      <td style="font-size:10px;color:var(--text2);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${name}">${name}</td>
-      ${pctCell(p.day)}${pctCell(p.week)}${pctCell(p.month)}
-      <td><button class="action-btn del" style="font-size:9px;padding:1px 4px;" onclick="wlRemove('${sec}',${col},${i})">✕</button></td>
-    </tr>`;
-  }).join('');
-}
-
-// Add ticker: fetch name ONCE, then save
-async function wlAddTicker(sec, col){
-  const inp = document.getElementById(`wl-add-${sec}-${col}`);
-  if(!inp) return;
-  const t = inp.value.trim().toUpperCase();
-  if(!t) return;
-  if(!wlData[sec]) wlData[sec]=[[],[],[]];
-  if(!wlData[sec][col]) wlData[sec][col]=[];
-  if(wlData[sec][col].includes(t)){ inp.value=''; return; }
-
-  // Fetch name once on add
-  if(!wlNames[t]){
-    const status = document.getElementById('wl-status');
-    if(status) status.textContent=`Name für ${t}…`;
-    try{
-      const r = await fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${t}&token=${FH_KEY}`);
-      const d = await r.json();
-      wlNames[t] = d?.name || t;
-    }catch(e){ wlNames[t] = t; }
-    // Save names
-    sbUpsert('depot_settings',{key:'watchlist_names_v1',value:JSON.stringify(wlNames)}).catch(()=>{});
-    if(status) status.textContent='';
-  }
-
-  wlData[sec][col].push(t);
-  inp.value='';
-  renderWlTable(sec,col);
-  // Auto-save tickers
-  sbUpsert('depot_settings',{key:'watchlist_v1',value:JSON.stringify(wlData)}).catch(()=>{});
-}
-
-function wlRemove(sec, col, idx){
-  wlData[sec][col].splice(idx,1);
-  renderWlTable(sec,col);
-  sbUpsert('depot_settings',{key:'watchlist_v1',value:JSON.stringify(wlData)}).catch(()=>{});
-}
-
-// Load prices: only candles, no profile calls
-async function fetchWLCandles(ticker){
-  try{
-    const now = Math.floor(Date.now()/1000);
-    const from = now - 35*24*60*60;
-    const r = await fetch(`https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${from}&to=${now}&token=${FH_KEY}`);
-    const d = await r.json();
-    if(d.s==='ok' && d.c?.length >= 2){
-      const c=d.c, last=c[c.length-1], prev1=c[c.length-2];
-      const prev5=c[Math.max(0,c.length-6)], prev21=c[Math.max(0,c.length-22)];
-      const pct=(a,b)=>b?((a-b)/b*100):null;
-      return {day:pct(last,prev1), week:pct(last,prev5), month:pct(last,prev21)};
-    }
-  }catch(e){}
-  // Fallback YF for EU tickers
-  try{
-    const yfUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=35d`;
-    const r=await fetch(`https://corsproxy.io/?url=${encodeURIComponent(yfUrl)}`,{headers:{'Accept':'application/json'}});
-    if(r.ok){
-      const d=JSON.parse(await r.text());
-      const meta=d?.chart?.result?.[0]?.meta;
-      const closes=d?.chart?.result?.[0]?.indicators?.quote?.[0]?.close?.filter(v=>v!=null);
-      if(closes?.length>=2){
-        if(meta?.shortName && !wlNames[ticker]) wlNames[ticker]=meta.shortName;
-        const last=closes[closes.length-1],prev1=closes[closes.length-2];
-        const prev5=closes[Math.max(0,closes.length-6)],prev21=closes[Math.max(0,closes.length-22)];
-        const pct=(a,b)=>b?((a-b)/b*100):null;
-        return {day:pct(last,prev1), week:pct(last,prev5), month:pct(last,prev21)};
-      }
-    }
-  }catch(e){}
-  return null;
-}
-
-async function loadWatchlistPrices(){
-  const status = document.getElementById('wl-status');
-  if(status) status.textContent='Lädt…';
-  const all=[...new Set(WL_SECTIONS.flatMap(s=>[0,1,2].flatMap(c=>wlData[s]?.[c]||[])))].filter(t=>t);
-  let done=0;
-  for(const t of all){
-    const data=await fetchWLCandles(t);
-    if(data) wlPct[t]=data;
-    done++;
-    if(status) status.textContent=`${done}/${all.length}…`;
-    WL_SECTIONS.forEach(s=>{for(let c=0;c<WL_COLS;c++){if((wlData[s]?.[c]||[]).includes(t)) renderWlTable(s,c);}});
-    await new Promise(r=>setTimeout(r,250));
-  }
-  if(status) status.textContent=`✓ ${done} Ticker`;
-}
-
-async function saveWatchlist(){
-  await sbUpsert('depot_settings',{key:'watchlist_v1',value:JSON.stringify(wlData)});
-  await sbUpsert('depot_settings',{key:'watchlist_names_v1',value:JSON.stringify(wlNames)});
-  showToast('Watchlist gespeichert','ok');
-}
 </script>
 </body>
 </html>
